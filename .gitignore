@@ -9,6 +9,7 @@ packages/
 # Fichiers de build
 bin/
 obj/
+Server/
 
 # Fichiers de sauvegarde
 *.bak

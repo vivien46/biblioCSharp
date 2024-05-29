@@ -7,9 +7,9 @@ node_modules/
 packages/
 
 # Fichiers de build
-bin/
-obj/
-Server/
+**/bin/
+**/obj/
+**/Migrations/
 
 # Fichiers de sauvegarde
 *.bak
@@ -57,3 +57,6 @@ yarn-error.log
 *.vsixmanifest
 *.vsix
 *.sln.docstates
+
+# Dossier properties dans Server
+Server/properties/

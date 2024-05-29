@@ -13,7 +13,22 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
+h1 {
+  font-size: 1.5em;
+  font-weight: 700;
+  margin: 0;
+  text-align: center;
+  
+}
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  margin-top: 2em;
+  font-size: 1em;
+  color: #fff;
+}
+/* a {
   font-weight: 500;
   color: #646cff;
   text-decoration: inherit;
@@ -65,4 +80,4 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
-}
+} */

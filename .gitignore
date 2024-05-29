@@ -1,0 +1,58 @@
+# Fichiers de configuration
+appsettings.json
+appsettings.Development.json
+
+# Dossiers de dépendances
+node_modules/
+packages/
+
+# Fichiers de build
+bin/
+obj/
+
+# Fichiers de sauvegarde
+*.bak
+*.log
+
+# Fichiers de cache
+.vs/
+.vscode/
+npm-debug.log
+yarn-error.log
+
+# Fichiers de solution Visual Studio
+*.sln
+*.suo
+*.user
+*.userprefs
+*.vspscc
+*.vssscc
+*.psess
+*.vsp
+*.vspx
+*.vsixmanifest
+*.vsix
+*.sln.docstates
+
+# Fichiers de projet Visual Studio
+*.csproj
+*.resx
+*.settings
+*.cache
+*.dll
+*.exe
+*.pdb
+*.userprefs
+*.bak
+*.cache
+*.tmp
+*.tmp_proj
+*.log
+*.vspscc
+*.vssscc
+*.psess
+*.vsp
+*.vspx
+*.vsixmanifest
+*.vsix
+*.sln.docstates

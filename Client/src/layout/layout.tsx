@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 import UserPage from '../Component/UserPage';
 import HomePage from '../Component/HomePage';
+import RegisterForm from '../Component/RegisterForm';
 
 const Layout: React.FC = () => {
     return (
@@ -20,6 +21,7 @@ const Layout: React.FC = () => {
                 <Routes>
                     <Route path='/' element={<HomePage />}/>
                     <Route path='/api/user' element={<UserPage />}/>
+                    <Route path='/api/user/register' element={<RegisterForm />}/>
                 </Routes>
             </main>
         </div>

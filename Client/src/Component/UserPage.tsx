@@ -21,24 +21,26 @@ const UserPage: React.FunctionComponent = () => {
   // }, [user]);
 
   return (
-    <div>
+    <div className="flex flex-col justify-center">
+      <h1 className="text-center font-medium text-2xl">Liste des utilisateurs enregistrés</h1>
+
       {user ? (
-        <table>
-          <thead>
-            <tr>
-              <th>Username</th>
-              <th>Email</th>
+        <table className="border-collapse border-2 border-gray-500 mt-8">
+        <thead>
+          <tr>
+            <th className="border-2 border-gray-500 text-center p-2">Username</th>
+            <th className="border-2 border-gray-500 text-center p-2">Email</th>
+          </tr>
+        </thead>
+        <tbody className="border-2 border-gray-500">
+          {user && user.map((userItem: any, index: number) => (
+            <tr key={index} className="border-2 border-gray-500">
+              <td className="border-2 border-gray-500 text-center p-2">{userItem.username}</td>
+              <td className="border-2 border-gray-500 text-center p-2">{userItem.email}</td>
             </tr>
-          </thead>
-          <tbody>
-            {user.map((userItem: any, index: number) => (
-              <tr key={index}>
-                <td>{userItem.username}</td>
-                <td>{userItem.email}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+          ))}
+        </tbody>
+      </table>
       ) : (
         <p>Chargement...</p>
       )}

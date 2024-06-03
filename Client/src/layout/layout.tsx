@@ -3,8 +3,9 @@ import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 import UserPage from '../Component/UserPage';
 import HomePage from '../Component/HomePage';
 import RegisterForm from '../Component/RegisterForm';
-import BookPage from '../Component/BookPage';
+import BooksPage from '../Component/BooksPage';
 import BookAdd from '../Component/BookAdd';
+import Book from '../Component/Book';
 
 const Layout: React.FC = () => {
     return (
@@ -26,8 +27,11 @@ const Layout: React.FC = () => {
                     <Route path='/' element={<HomePage />}/>
                     <Route path='/api/user' element={<UserPage />}/>
                     <Route path='/api/user/register' element={<RegisterForm />} />
-                    <Route path='/api/book' element={<BookPage />} />
+                    <Route path='/api/book' element={<BooksPage />} />
                     <Route path='/api/book/add' element={<BookAdd />} />
+                    <Route path='/api/book/:id' element={<Book />} /> {/* Add the 'id' prop */}
+                    <Route path='/api/book/previous/:id' />
+                    <Route path='/api/book/next/:id' />
                 </Routes>
             </main>
         </div>

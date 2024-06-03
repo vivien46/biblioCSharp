@@ -20,6 +20,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
+  "include": ["src", "src/Component/BookPage.tsx"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

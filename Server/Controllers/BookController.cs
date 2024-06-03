@@ -26,7 +26,7 @@ namespace Server.Controllers
         [HttpPost("add")]
         public async Task<IActionResult> AddLivre([FromForm] Livre livre, [FromForm] IFormFile image)
         {
-             if (image == null || image.Length == 0)
+            if (image == null || image.Length == 0)
                 return BadRequest("Image is missing");
 
             var imagePath = Path.Combine(_hostingEnvironment.WebRootPath, "assets/images/Livres");
@@ -39,7 +39,7 @@ namespace Server.Controllers
 
             using (var stream = new FileStream(fullPath, FileMode.Create))
             {
-            await image.CopyToAsync(stream);
+                await image.CopyToAsync(stream);
             }
 
             livre.ImageUrl = image.FileName; // Store only the file name in the database
@@ -81,6 +81,44 @@ namespace Server.Controllers
             return File(image, "image/jpeg");
         }
 
+        [HttpGet("previous/{id}")]
+        public async Task<IActionResult> GetPreviousBook(int id)
+        {
+            var currentBook = await _context.Livres.FindAsync(id);
+            if (currentBook == null)
+            {
+                return NotFound("Livre actuel non trouvé");
+            }
+
+            var livre = await _context.Livres.Where(l => l.Id < id).OrderByDescending(l => l.Id).FirstOrDefaultAsync();
+            if (livre == null)
+            {
+                return NotFound("Livre précédent non trouvé");
+            }
+
+            return Ok(livre);
+        }
+
+        [HttpGet("next/{id}")]
+        public async Task<IActionResult> GetNextBook(int id)
+        {
+            var currentBook = await _context.Livres.FindAsync(id);
+            if (currentBook == null)
+            {
+                return NotFound("Livre actuel non trouvé");
+            }
+
+            var livre = await _context.Livres.Where(l => l.Id > id).OrderBy(l => l.Id).FirstOrDefaultAsync();
+            if (livre == null)
+            {
+                return NotFound("Livre suivant non trouvé");
+            }
+
+            return Ok(livre);
+        }
+
+
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromForm] Livre livre, [FromForm] IFormFile image)
         {
@@ -91,7 +129,7 @@ namespace Server.Controllers
                 return NotFound("Livre non trouvé");
             }
 
-            if( image != null && image.Length > 0)
+            if (image != null && image.Length > 0)
             {
                 var imagePath = Path.Combine(_hostingEnvironment.WebRootPath, "assets/Images/Livres");
 

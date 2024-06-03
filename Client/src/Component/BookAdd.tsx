@@ -29,7 +29,7 @@ const BookAdd: React.FunctionComponent = () => {
                     <input type="text" id="isbn" name="isbn" className="border-2 border-gray-500 rounded p-1 mb-5" />
 
                     <label htmlFor="image" className="text-center font-medium text-lg">Image</label>
-                    <input type="text" id="image" name="image" className="border-2 border-gray-500 rounded p-1 mb-5" />
+                    <input type="file" id="image" name="image" className="border-2 border-gray-500 rounded p-1 mb-5" />
 
                     <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add Book</button>
                 </form>

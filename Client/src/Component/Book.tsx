@@ -52,37 +52,43 @@ const Book: React.FC = () => {
     }
 
     return (
-        <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
-            <h2 className="text-3xl font-bold text-center mb-6">{bookData.titre}</h2>
-            
-            <div className="flex flex-col md:flex-row items-center md:items-start">
-                <div className="md:w-1/3 p-4">
-                    <a href={`/assets/Images/Livres/${bookData.imageUrl}`} target="_blank" rel="noreferrer">
-                    <img 
-                        src={`/assets/Images/Livres/${bookData.imageUrl}`} 
-                        alt={bookData.titre} 
-                        className="w-full h-auto object-cover rounded-lg shadow-md" 
-                    />
-                    </a>
-                </div>
-                <div className="md:w-2/3 p-4">
-                    <div className="mb-4">
-                        <p className="text-xl"><span className="font-bold">Author:</span> {bookData.auteur}</p>
-                        <p className="text-xl"><span className="font-bold">Editor:</span> {bookData.editeur}</p>
-                        <p className="text-xl"><span className="font-bold">Year:</span> {bookData.annee}</p>
-                        <p className="text-xl"><span className="font-bold">ISBN:</span> {bookData.isbn}</p>
-                    </div>
-                    <div className="p-4 bg-gray-100 rounded-lg shadow-inner">
-                        <h3 className="text-2xl font-semibold mb-2 text-center">Résumé du Livre</h3>
-                        <p className="text-lg">Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit, voluptatum iure repellat quia consectetur soluta officiis, delectus dolorum unde nisi vel maxime facere quaerat omnis. Temporibus assumenda iusto blanditiis quos, sed laudantium id numquam repudiandae voluptas commodi doloremque rem! Libero quos ex quis cupiditate, culpa tenetur laboriosam quidem recusandae tempora.</p>
-                    </div>
-                </div>
-            </div>
-            <div className="flex justify-center mt-6 gap-1">
-                <button className="bg-blue-200 m-1 p-1 rounded-md" onClick={getPreviousBook} disabled={id === "1"}>Previous</button> <button className="bg-blue-700 m-1 p-1 rounded-md" onClick={getNextBook}>Next</button>
-            </div>
+      <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
+      <h2 className="text-3xl font-bold text-center mb-6">{bookData.titre}</h2>
+      
+      <div className="flex flex-col md:flex-row items-center md:items-center">
+        <div className="md:w-1/3 p-4">
+        {bookData.imageUrl ? (
+          <a href={`/assets/Images/Livres/${bookData.imageUrl}`} target="_blank" rel="noreferrer">
+          <img 
+            src={`/assets/Images/Livres/${bookData.imageUrl}`} 
+            alt={bookData.titre} 
+            className="w-full h-auto object-cover rounded-lg shadow-md" 
+          />
+          </a>
+        ) : (
+          <div className="flex justify-center">
+          <p className="text-xl">Pas d'image</p>
+          </div>
+        )}
         </div>
+        <div className="md:w-2/3 p-4">
+        <div className="mb-4">
+          <p className="text-xl"><span className="font-bold">Author:</span> {bookData.auteur}</p>
+          <p className="text-xl"><span className="font-bold">Editor:</span> {bookData.editeur}</p>
+          <p className="text-xl"><span className="font-bold">Year:</span> {bookData.annee}</p>
+          <p className="text-xl"><span className="font-bold">ISBN:</span> {bookData.isbn}</p>
+        </div>
+        <div className="p-4 bg-gray-100 rounded-lg shadow-inner">
+          <h3 className="text-2xl font-semibold mb-2 text-center">Résumé du Livre</h3>
+          <p className="text-lg text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit, voluptatum iure repellat quia consectetur soluta officiis, delectus dolorum unde nisi vel maxime facere quaerat omnis. Temporibus assumenda iusto blanditiis quos, sed laudantium id numquam repudiandae voluptas commodi doloremque rem! Libero quos ex quis cupiditate, culpa tenetur laboriosam quidem recusandae tempora.</p>
+        </div>
+        </div>
+      </div>
+      <div className="flex justify-center mt-6 gap-1">
+        <button className="bg-blue-200 m-1 p-1 rounded-md" onClick={getPreviousBook} disabled={id === "1"}>Previous</button> <button className="bg-blue-700 m-1 p-1 rounded-md" onClick={getNextBook}>Next</button>
+      </div>
+      </div>
     );
-};
+  };
 
 export default Book;

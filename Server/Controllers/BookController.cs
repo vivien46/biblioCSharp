@@ -24,30 +24,37 @@ namespace Server.Controllers
         }
 
         [HttpPost("add")]
-        public async Task<IActionResult> AddLivre([FromForm] Livre livre, [FromForm] IFormFile image)
-        {
-            if (image == null || image.Length == 0)
-                return BadRequest("Image is missing");
+public async Task<IActionResult> AddLivre([FromForm] Livre livre, [FromForm] IFormFile imageFile)
+{
+    if (imageFile == null || imageFile.Length == 0)
+        return BadRequest("Image is missing");
 
-            var imagePath = Path.Combine(_hostingEnvironment.WebRootPath, "assets/images/Livres");
+    // Assume que le chemin relatif vers le dossier Client est correctement défini dans le front-end
+    var fileName = Path.GetFileName(imageFile.FileName);
 
-            if (!Directory.Exists(imagePath))
-                Directory.CreateDirectory(imagePath);
+    // Stockez uniquement le nom du fichier dans la base de données
+    livre.ImageUrl = fileName;
 
-            var fileName = Path.GetFileName(image.FileName);
-            var fullPath = Path.Combine(imagePath, fileName);
+    // Enregistrez le fichier dans le dossier du client
+    var clientPath = Path.Combine(AppContext.BaseDirectory, "..\\..\\..\\..\\Client\\public\\assets\\Images\\Livres");
 
-            using (var stream = new FileStream(fullPath, FileMode.Create))
-            {
-                await image.CopyToAsync(stream);
-            }
+    if (!Directory.Exists(clientPath))
+        Directory.CreateDirectory(clientPath);
 
-            livre.ImageUrl = image.FileName; // Store only the file name in the database
-            _context.Livres.Add(livre);
-            await _context.SaveChangesAsync();
+    var fullPath = Path.Combine(clientPath, fileName);
 
-            return Ok(livre);
-        }
+    using (var stream = new FileStream(fullPath, FileMode.Create))
+    {
+        await imageFile.CopyToAsync(stream);
+    }
+
+    // Ajoutez le livre à la base de données
+    _context.Livres.Add(livre);
+    await _context.SaveChangesAsync();
+
+    return Ok(livre);
+}
+
 
         [HttpGet()]
         public async Task<IActionResult> GetLivres()

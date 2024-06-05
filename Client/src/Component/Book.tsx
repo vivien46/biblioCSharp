@@ -40,6 +40,11 @@ const Book: React.FC = () => {
         }
       }
 
+      const getRandomImageUrl = () => {
+        const randomId = Math.floor(Math.random() * 1000); // Générer un identifiant aléatoire entre 0 et 999
+        return `https://picsum.photos/200/350?random=${randomId}`; // Utiliser Picsum avec l'identifiant aléatoire
+    };
+
     useEffect(() => {
         fetch(`https://localhost:7153/api/book/${id}`)
             .then(response => response.json())
@@ -66,8 +71,15 @@ const Book: React.FC = () => {
           />
           </a>
         ) : (
-          <div className="flex justify-center">
-          <p className="text-xl">Pas d'image</p>
+          <div className="flex flex-col justify-center">
+          <img 
+            src={getRandomImageUrl()} 
+            alt="Image par défaut" 
+            className="w-full h-auto object-cover rounded-lg shadow-md" 
+          />
+          <caption>
+            <p className="text-sm text-gray-500">Image par défaut</p>
+          </caption>
           </div>
         )}
         </div>

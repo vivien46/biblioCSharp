@@ -11,7 +11,7 @@ interface BookData {
    imageUrl: string;
 }
 
-const Book: React.FC = () => {
+const BookDetail: React.FC = () => {
     const { id } = useParams<{ id: string }>(); // Extract 'id' from URL params
     const [bookData, setBookData] = useState<BookData | null>(null);
     const navigate = useNavigate();
@@ -103,4 +103,4 @@ const Book: React.FC = () => {
     );
   };
 
-export default Book;
+export default BookDetail;

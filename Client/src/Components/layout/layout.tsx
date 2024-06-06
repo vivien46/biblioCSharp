@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
-import UserPage from '../Component/UserPage';
-import HomePage from '../Component/HomePage';
-import RegisterForm from '../Component/RegisterForm';
-import BooksPage from '../Component/BooksPage';
-import BookAdd from '../Component/BookAdd';
-import Book from '../Component/Book';
+import UsersPage from '../../Pages/UsersPage';
+import HomePage from '../../Pages/HomePage';
+import RegisterForm from '../Users/RegisterForm';
+import BooksPage from '../../Pages/BooksPage';
+import BookAdd from '../Books/BookAdd';
+import BookDetail from '../Books/BookDetail';
 
 const Layout: React.FC = () => {
     const [isUsersDropdownOpen, setIsUsersDropdownOpen] = useState(false);
@@ -77,13 +77,17 @@ const Layout: React.FC = () => {
                 <main className="p-6">
                     <Routes>
                         <Route path='/' element={<HomePage />} />
-                        <Route path='/api/user' element={<UserPage />} />
+                        <Route path='/api/user' element={<UsersPage />} />
                         <Route path='/api/user/register' element={<RegisterForm />} />
                         <Route path='/api/book' element={<BooksPage />} />
                         <Route path='/api/book/add' element={<BookAdd />} />
-                        <Route path='/api/book/:id' element={<Book />} />
+                        <Route path='/api/book/:id' element={<BookDetail />} />
                     </Routes>
                 </main>
+
+                <footer className="fixed bottom-0 w-full p-6 bg-black border-t border-gray-200">
+                    <p className="text-center text-gray-300">© 2021 All rights reserved.</p>
+                </footer>
             </div>
         </Router>
     );

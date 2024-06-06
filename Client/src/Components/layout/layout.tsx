@@ -11,6 +11,9 @@ const Layout: React.FC = () => {
     const [isUsersDropdownOpen, setIsUsersDropdownOpen] = useState(false);
     const [isBooksDropdownOpen, setIsBooksDropdownOpen] = useState(false);
 
+    const releaseYear = 2024;
+    const currentYear = new Date().getFullYear();
+
     const toggleUsersDropdown = () => {
         setIsUsersDropdownOpen(!isUsersDropdownOpen);
     };
@@ -21,7 +24,7 @@ const Layout: React.FC = () => {
 
     return (
         <Router>
-            <div className="font-sans text-black antialiased">
+            <div className="font-sans text-black antialiased flex flex-col min-h-screen">
                 <header className="flex items-center justify-between p-6 bg-black border-b border-gray-200">
                     <nav className="flex items-center">
                         <ul className="flex uppercase space-x-10">
@@ -74,7 +77,7 @@ const Layout: React.FC = () => {
                     </div>
                 </header>
 
-                <main className="p-6">
+                <main className="flex-grow p-6 mb-6">
                     <Routes>
                         <Route path='/' element={<HomePage />} />
                         <Route path='/api/user' element={<UsersPage />} />
@@ -85,8 +88,8 @@ const Layout: React.FC = () => {
                     </Routes>
                 </main>
 
-                <footer className="fixed bottom-0 w-full p-6 bg-black border-t border-gray-200">
-                    <p className="text-center text-gray-300">© 2021 All rights reserved.</p>
+                <footer className="w-full p-6 bg-black border-t border-gray-200">
+                    <p className="text-center text-gray-300">© { releaseYear } { currentYear > releaseYear ? ` - ${currentYear}` : ''} - All Right Reserved.</p>
                 </footer>
             </div>
         </Router>

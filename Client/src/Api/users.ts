@@ -6,4 +6,4 @@ export const usersApi = async () => {
     }
     const data = await res.json();
     return data;
-    }
+}

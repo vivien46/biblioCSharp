@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 interface BookData {
    titre: string;
@@ -59,6 +60,7 @@ const BookDetail: React.FC = () => {
     return (
       <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
       <h2 className="text-3xl font-bold text-center mb-6">{bookData.titre}</h2>
+
       
       <div className="flex flex-col md:flex-row items-center md:items-center">
         <div className="md:w-1/3 p-4">
@@ -99,6 +101,11 @@ const BookDetail: React.FC = () => {
       <div className="flex justify-center mt-6 gap-1">
         <button className="bg-blue-200 m-1 p-1 rounded-md" onClick={getPreviousBook} disabled={id === "1"}>Previous</button> <button className="bg-blue-700 m-1 p-1 rounded-md" onClick={getNextBook}>Next</button>
       </div>
+
+      <div className="flex justify-center mt-6 gap-1">
+          <Link to={`/api/book/edit/${id}`} className="bg-blue-200 m-1 p-1 rounded-md">Modifier</Link>
+      </div>
+
       </div>
     );
   };

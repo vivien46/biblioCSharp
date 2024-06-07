@@ -6,6 +6,7 @@ import RegisterForm from '../Users/RegisterForm';
 import BooksPage from '../../Pages/BooksPage';
 import BookAdd from '../Books/BookAdd';
 import BookDetail from '../Books/BookDetail';
+import BookUpdate from '../Books/BookUpdate';
 
 const Layout: React.FC = () => {
     const [isUsersDropdownOpen, setIsUsersDropdownOpen] = useState(false);
@@ -85,6 +86,7 @@ const Layout: React.FC = () => {
                         <Route path='/api/book' element={<BooksPage />} />
                         <Route path='/api/book/add' element={<BookAdd />} />
                         <Route path='/api/book/:id' element={<BookDetail />} />
+                        <Route path='/api/book/edit/:id' element={<BookUpdate />} />
                     </Routes>
                 </main>
 

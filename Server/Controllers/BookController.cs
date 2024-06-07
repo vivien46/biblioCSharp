@@ -24,36 +24,36 @@ namespace Server.Controllers
         }
 
         [HttpPost("add")]
-public async Task<IActionResult> AddLivre([FromForm] Livre livre, [FromForm] IFormFile imageFile)
-{
-    if (imageFile == null || imageFile.Length == 0)
-        return BadRequest("Image is missing");
+        public async Task<IActionResult> AddLivre([FromForm] Livre livre, [FromForm] IFormFile imageFile)
+        {
+            if (imageFile == null || imageFile.Length == 0)
+                return BadRequest("Image is missing");
 
-    // Assume que le chemin relatif vers le dossier Client est correctement défini dans le front-end
-    var fileName = Path.GetFileName(imageFile.FileName);
+            // Assume que le chemin relatif vers le dossier Client est correctement défini dans le front-end
+            var fileName = Path.GetFileName(imageFile.FileName);
 
-    // Stockez uniquement le nom du fichier dans la base de données
-    livre.ImageUrl = fileName;
+            // Stockez uniquement le nom du fichier dans la base de données
+            livre.ImageUrl = fileName;
 
-    // Enregistrez le fichier dans le dossier du client
-    var clientPath = Path.Combine(AppContext.BaseDirectory, "..\\..\\..\\..\\Client\\public\\assets\\Images\\Livres");
+            // Enregistrez le fichier dans le dossier du client
+            var clientPath = Path.Combine(AppContext.BaseDirectory, "..\\..\\..\\..\\Client\\public\\assets\\Images\\Livres");
 
-    if (!Directory.Exists(clientPath))
-        Directory.CreateDirectory(clientPath);
+            if (!Directory.Exists(clientPath))
+                Directory.CreateDirectory(clientPath);
 
-    var fullPath = Path.Combine(clientPath, fileName);
+            var fullPath = Path.Combine(clientPath, fileName);
 
-    using (var stream = new FileStream(fullPath, FileMode.Create))
-    {
-        await imageFile.CopyToAsync(stream);
-    }
+            using (var stream = new FileStream(fullPath, FileMode.Create))
+            {
+                await imageFile.CopyToAsync(stream);
+            }
 
-    // Ajoutez le livre à la base de données
-    _context.Livres.Add(livre);
-    await _context.SaveChangesAsync();
+            // Ajoutez le livre à la base de données
+            _context.Livres.Add(livre);
+            await _context.SaveChangesAsync();
 
-    return Ok(livre);
-}
+            return Ok(livre);
+        }
 
 
         [HttpGet()]
@@ -78,7 +78,7 @@ public async Task<IActionResult> AddLivre([FromForm] Livre livre, [FromForm] IFo
         [HttpGet("image/{fileName}")]
         public IActionResult GetImage(string fileName)
         {
-            var imagePath = Path.Combine(_hostingEnvironment.WebRootPath, "assets/images/Livres", fileName);
+            var imagePath = Path.Combine(_hostingEnvironment.WebRootPath, "assets/Images/Livres", fileName);
             if (!System.IO.File.Exists(imagePath))
             {
                 return NotFound("Image non trouvée");
@@ -126,8 +126,8 @@ public async Task<IActionResult> AddLivre([FromForm] Livre livre, [FromForm] IFo
 
 
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromForm] Livre livre, [FromForm] IFormFile image)
+        [HttpPut("edit/{id}")]
+        public async Task<IActionResult> Update(int id, [FromForm] Livre livre, [FromForm(Name = "image")] IFormFile image)
         {
             var bookToUpdate = await _context.Livres.FindAsync(id);
 
@@ -138,7 +138,11 @@ public async Task<IActionResult> AddLivre([FromForm] Livre livre, [FromForm] IFo
 
             if (image != null && image.Length > 0)
             {
-                var imagePath = Path.Combine(_hostingEnvironment.WebRootPath, "assets/Images/Livres");
+                var projectDirectory = Path.GetFullPath("..\\Client\\public");
+                Console.WriteLine($"projectDirectory: {projectDirectory}");
+
+                var imagePath = Path.Combine(projectDirectory, "assets\\Images\\Livres");
+                Console.WriteLine($"imagePath: {imagePath}");
 
                 if (!Directory.Exists(imagePath))
                     Directory.CreateDirectory(imagePath);
@@ -146,12 +150,18 @@ public async Task<IActionResult> AddLivre([FromForm] Livre livre, [FromForm] IFo
                 var fileName = Path.GetFileName(image.FileName);
                 var fullPath = Path.Combine(imagePath, fileName);
 
+                Console.WriteLine($"Tentative d'enregistrement de l'image à : {fullPath}");
+
                 using (var stream = new FileStream(fullPath, FileMode.Create))
                 {
                     await image.CopyToAsync(stream);
                 }
 
-                bookToUpdate.ImageUrl = $"/assets/Images/Livres/{fileName}";
+                Console.WriteLine($"Image enregistrée à : {fullPath}");
+
+                bookToUpdate.ImageUrl = $"{fileName}";
+            }else{
+                bookToUpdate.ImageUrl = livre.ImageUrl;
             }
 
             bookToUpdate.Titre = livre.Titre;

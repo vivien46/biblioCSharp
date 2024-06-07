@@ -51,8 +51,8 @@ const BookList: React.FC = () => {
                           {book.imageUrl === null || book.imageUrl === '' ? (
                             <p>Pas d'image</p>
                           ) : (
-                            <div className='image-cell'>
-                              <img src={`/assets/Images/Livres/${book.imageUrl}`} alt={book.title} className="h-30 w-20" />
+                            <div className="flex flex-row justify-center">
+                              <img src={`/assets/Images/Livres/${book.imageUrl}`} alt={book.title} className="h-30 w-20 p-1" />
                             </div>
                           )}
                         </td>

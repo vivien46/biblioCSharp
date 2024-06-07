@@ -4,7 +4,10 @@ using Server.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var clientPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..\\..\\..\\Client\\public\\assets\\Images\\Livres"));
+var livresImagesPath = Path.Combine(AppContext.BaseDirectory, "..\\Client\\public\\assets\\Images\\Livres");
+var fullImagesPath = Path.GetFullPath(livresImagesPath);
+
+builder.Environment.WebRootPath = Path.GetFullPath("..\\Client\\public");
 
 // Add services to the container.
 builder.Services.AddControllers();

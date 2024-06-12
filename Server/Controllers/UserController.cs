@@ -38,8 +38,20 @@ namespace Server.Controllers
             return Ok(users);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, User user)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUser(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound("Utilisateur non trouvé");
+            }
+
+            return Ok(user);
+        }
+
+        [HttpPut("edit/{id}")]
+        public async Task<IActionResult> Update(int id, [FromForm] User formData)
         {
             var userToUpdate = await _context.Users.FindAsync(id);
             if (userToUpdate == null)
@@ -47,9 +59,18 @@ namespace Server.Controllers
                 return NotFound();
             }
 
-            userToUpdate.Username = user.Username;
-            userToUpdate.Email = user.Email;
-            userToUpdate.Role = user.Role;
+            userToUpdate.Username = formData.Username ?? userToUpdate.Username;
+            userToUpdate.Email = formData.Email ?? userToUpdate.Email;
+            userToUpdate.Role = formData.Role != default ? formData.Role : userToUpdate.Role;
+           
+           if (Enum.IsDefined(typeof(Role), formData.Role))
+            {
+                userToUpdate.Role = formData.Role;
+            }
+            else
+            {
+                return BadRequest("Role invalide");
+            }
 
             await _context.SaveChangesAsync();
 

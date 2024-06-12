@@ -20,7 +20,16 @@ namespace Server.Database
             modelBuilder.Entity<Emprunt>()
                 .HasOne(e => e.Livre)
                 .WithMany(l => l.Emprunts)
-                .HasForeignKey(e => e.LivreId);   
+                .HasForeignKey(e => e.LivreId);
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.Role)
+                .HasConversion<int>();
+
         }
     }
 }

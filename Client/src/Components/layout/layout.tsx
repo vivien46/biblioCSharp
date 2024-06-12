@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 import UsersPage from '../../Pages/UsersPage';
 import HomePage from '../../Pages/HomePage';
 import RegisterForm from '../Users/RegisterForm';
+import User from '../Users/User';
+import UserEditForm from '../Users/UserEditForm';
 import BooksPage from '../../Pages/BooksPage';
 import BookAdd from '../Books/BookAdd';
 import BookDetail from '../Books/BookDetail';
@@ -83,6 +85,8 @@ const Layout: React.FC = () => {
                         <Route path='/' element={<HomePage />} />
                         <Route path='/api/user' element={<UsersPage />} />
                         <Route path='/api/user/register' element={<RegisterForm />} />
+                        <Route path='/api/user/:id' element={<User />} />
+                        <Route path='/api/user/edit/:id' element={<UserEditForm />} />
                         <Route path='/api/book' element={<BooksPage />} />
                         <Route path='/api/book/add' element={<BookAdd />} />
                         <Route path='/api/book/:id' element={<BookDetail />} />

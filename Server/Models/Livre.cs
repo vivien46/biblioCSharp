@@ -8,8 +8,8 @@ namespace Server.Models
         public string Editeur { get; set; }
         public int Annee { get; set; }
         public string ISBN { get; set; }
-        public string ImageUrl { get; set; }
+        public string? ImageUrl { get; set; }
 
-        public ICollection<Emprunt> Emprunts { get; set; }
+        public ICollection<Emprunt> ?Emprunts { get; set; }
     }
 }

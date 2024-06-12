@@ -1,4 +1,5 @@
 import React, { useState, useEffect} from "react";
+import { Link } from "react-router-dom";
 import { usersApi } from "../../Api/users";
 
 const UserList: React.FC = () => {
@@ -35,6 +36,7 @@ const UserList: React.FC = () => {
                         <tr>
                             <th className="border-2 border-gray-500 text-center p-2">Username</th>
                             <th className="border-2 border-gray-500 text-center p-2">Email</th>
+                            <th className="border-2 border-gray-500 text-center p-2">Action</th>
                             </tr>
                     </thead>
                     <tbody className="border-2 border-gray-500">
@@ -42,6 +44,12 @@ const UserList: React.FC = () => {
                             <tr key={index} className="border-2 border-gray-500">
                                 <td className="border-2 border-gray-500 text-center p-2">{user.username}</td>
                                 <td className="border-2 border-gray-500 text-center p-2">{user.email}</td>
+                                <td className="border-2 border-gray-500 text-center p-2 space-x-2">
+                                    <Link to={`/api/user/edit/${user.id}`}>
+                                        <button className="bg-blue-500 p-2 rounded-md">Edit</button>
+                                    </Link>
+                                    <button className="bg-red-500 p-2 rounded-md">Delete</button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>

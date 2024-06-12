@@ -1,12 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getBookById } from "../../Api/books";
-import { updateBook } from "../../Api/bookUpdate";
+import { getBookById, updateBook } from "../../Api/books";
 
-const UpdateBookPage: React.FC = () => {
+interface BookUpdateData {
+    titre: string;
+    auteur: string;
+    editeur: string;
+    annee: number;
+    isbn: string;
+    imageUrl: string;
+    image?: File | null;
+    emprunts: any[];
+}
+
+const BookUpdate: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const [book, setBook] = useState<any>({ titre: '', auteur: '', editeur: '', annee: '', isbn: '', imageUrl: '', image: '', emprunts: [] });
+    const [book, setBook] = useState<BookUpdateData>({ titre: '', auteur: '', editeur: '', annee: 0, isbn: '', imageUrl: '', image: null, emprunts: [] });
     const [imageFile, setImageFile] = useState<File | null>(null);
 
     useEffect(() => {
@@ -34,19 +44,27 @@ const UpdateBookPage: React.FC = () => {
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
             setImageFile(e.target.files[0]);
-            setBook({ ...book, imageUrl: e.target.files[0].name });
         }
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const updatedBook = { ...book, imageUrl: imageFile ? imageFile.name : book.imageUrl, annee: Number(book.annee)};
+            const formData = new FormData();
+            formData.append("titre", book.titre);
+            formData.append("auteur", book.auteur);
+            formData.append("editeur", book.editeur);
+            formData.append("annee", book.annee.toString());
+            formData.append("isbn", book.isbn);
+            if (imageFile) {
+                formData.append("image", imageFile);
+            }
 
-            console.log("Données du livre :", book);
+            console.log("Données du livre :", formData);
             console.log("Fichier image :", imageFile);
-            
-            await updateBook(id!, updatedBook, imageFile);
+
+         await updateBook(Number(id), formData);
+        
             navigate("/api/book");
         } catch (error) {
             console.error("Impossible de mettre à jour le livre :", error);
@@ -91,7 +109,7 @@ const UpdateBookPage: React.FC = () => {
                     <input
                         type="number"
                         name="annee"
-                        value={book.annee.toString() || ''}
+                        value={Number(book.annee || '')}
                         onChange={handleChange}
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                     />
@@ -121,7 +139,7 @@ const UpdateBookPage: React.FC = () => {
                     <label className="block text-gray-700">Choose New Image</label>
                     <input
                         type="file"
-                        name="imageUrl"
+                        name="image"
                         accept="image/*"
                         onChange={handleFileChange}
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
@@ -129,7 +147,7 @@ const UpdateBookPage: React.FC = () => {
                     {imageFile && (
                         <div>
                             <img src={URL.createObjectURL(imageFile)} alt="Selected Image" className="mt-1 block w-1/4 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
-                            
+
                         </div>
                     )}
                 </div>
@@ -139,4 +157,4 @@ const UpdateBookPage: React.FC = () => {
     );
 }
 
-export default UpdateBookPage;
+export default BookUpdate;

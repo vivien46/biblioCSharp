@@ -48,14 +48,19 @@ const UserList: React.FC = () => {
                                     <Link to={`/api/user/edit/${user.id}`}>
                                         <button className="bg-blue-500 p-2 rounded-md">Edit</button>
                                     </Link>
+                                    <Link to={`/api/user/delete/${user.id}`}>
                                     <button className="bg-red-500 p-2 rounded-md">Delete</button>
+                                    </Link>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             ) : (
+                <div>
+                <p>Aucun utilisateur trouvé</p>
                 <p>{error}</p>
+                </div>
             )}
         </div>
     );

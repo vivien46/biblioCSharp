@@ -5,6 +5,7 @@ import HomePage from '../../Pages/HomePage';
 import RegisterForm from '../Users/RegisterForm';
 import User from '../Users/User';
 import UserEditForm from '../Users/UserEditForm';
+import UserDelete from '../Users/UserDelete';
 import BooksPage from '../../Pages/BooksPage';
 import BookAdd from '../Books/BookAdd';
 import BookDetail from '../Books/BookDetail';
@@ -87,6 +88,7 @@ const Layout: React.FC = () => {
                         <Route path='/api/user/register' element={<RegisterForm />} />
                         <Route path='/api/user/:id' element={<User />} />
                         <Route path='/api/user/edit/:id' element={<UserEditForm />} />
+                        <Route path='/api/user/delete/:id' element={<UserDelete />} />
                         <Route path='/api/book' element={<BooksPage />} />
                         <Route path='/api/book/add' element={<BookAdd />} />
                         <Route path='/api/book/:id' element={<BookDetail />} />

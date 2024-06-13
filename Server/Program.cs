@@ -28,6 +28,15 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(5263); // HTTP
+    options.ListenAnyIP(7153, listenOptions =>
+    {
+        listenOptions.UseHttps(); // Use the development certificate
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

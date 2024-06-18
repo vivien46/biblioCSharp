@@ -1,56 +1,95 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getUserById, updateUser } from '../../Api/users';
+import { getUserById } from '../../Api/users';
+
+interface UserUpdateData {
+    username: string;
+    passwordHash?: string;
+    email: string;
+    role: number;
+    emprunts?: any[];
+}
 
 const UserEditForm: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const [user, setUser] = React.useState<any>({});
+    const [user, setUser] = React.useState<UserUpdateData>({username: '', passwordHash:'', email: '', role: 0, emprunts: [] });
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        getUserById(Number(id))
-            .then((data: any) => {
-                setUser(data);
-                setLoading(false);
-            })
-            .catch((error: any) => {
-                console.error('erreur lors de la récupération des données :', error);
-                setError('Impossible de charger les données');
-                setLoading(false);
-            });
-    }, [id]);
+        const fetchData = async () => {
+            try {
+                const UserToUpdate = await getUserById(Number(id));
+                if (UserToUpdate) {
+                    setUser({...UserToUpdate, username: UserToUpdate.username, email: UserToUpdate.email, role: UserToUpdate.role });
+                    setLoading(false);
+                } else {
+                    setError('Utilisateur non trouvé');
+                }
+            }catch (error: any) {
+                setError('Impossible de charger les données : ' + error);
+            }
+    };
+fetchData();
+}, [id]);
 
     const handleChanges = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setUser({
-            ...user,
-            [e.target.name]: e.target.value
-        });
-        console.log(user);
+        const { name, value } = e.target;
+        console.log(`Field ${name}, value ${value}`);
+        if (name === 'role') {
+            setUser(prevState => ({ ...prevState, role: Number(value) }));
+        } else
+        setUser({ ...user, [name]: value });
+        
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         try {
-            console.log(user);
-            const updatedUSer = await updateUser(Number(id), user);
-            console.log(updatedUSer);
-            setUser(updatedUSer);
-            navigate(`/user/${id}`);
+            const { passwordHash, emprunts, ...userWithoutPassword } = user;
+            const formData = new FormData();
+            formData.append('username', userWithoutPassword.username);
+            formData.append('email', userWithoutPassword.email);
+            const roleNumber = userWithoutPassword.role.toString() === '0' ? 0 : 1;
+            formData.append('role', roleNumber.toString());
 
-        } catch (error) {
-            console.error('erreur lors de la mise à jour de l\'utilisateur :', error);
+        console.log("Données à envoyer :", formData);
+        for(let pair of formData.entries()) {
+            console.log(pair[0] + ', ' + pair[1]);
         }
-    };
 
-    if (loading) {
-        return <p>Chargement...</p>;
+        const response = await fetch(`https://localhost:7153/api/user/edit/${id}`, {
+            method: 'PUT',
+            body: formData
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Erreur lors de la mise à jour de l'utilisateur. Statut: ${response.status}, Message: ${errorText}`);
+            }
+            
+            const data = await response.json();
+            console.log("Utilisateur mis à jour : ", data);
+
+            window.alert("L'utilisateur à été mis à jour avec succès");
+            navigate(`/api/user/${id}`);
+
+        }catch(error) {
+            if (error instanceof Error) {
+                setError("Erreur lors de la mise à jour de l'utilisateur : " + error.message);
+                window.alert("Erreur lors de la mise à jour de l'utilisateur : " + error.message);
+            }else {
+                setError("Une erreur inconnue s'est produite lors de la mise à jour de l'utilisateur");
+                window.alert("Une erreur inconnue s'est produite lors de la mise à jour de l'utilisateur");
+            }
+        }
     }
 
-    if (error) {
-        return <p>{error}</p>;
+    if (loading) {
+        // setLoading(true);
+        return <p>Chargement...</p>;
     }
 
     return (
@@ -68,8 +107,8 @@ const UserEditForm: React.FC = () => {
                 <div className="mb-4">
                     <label htmlFor='role' className="block mb-2">Role</label>
                     <select name='role' id='role' value={user.role} onChange={handleChanges} className="border border-gray-300 rounded px-4 py-2 w-full">
-                        <option value='admin'>Admin</option>
-                        <option value='user'>User</option>
+                        <option value={1}>Admin</option>
+                        <option value={0}>User</option>
                     </select>
                 </div>
                 <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">Update User</button>

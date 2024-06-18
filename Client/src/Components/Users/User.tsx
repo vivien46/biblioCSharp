@@ -44,12 +44,12 @@ if (user) {
                     <tr className="border-2 border-gray-500">
                         <td className="border-2 border-gray-500 text-center p-2">{user.username}</td>
                         <td className="border-2 border-gray-500 text-center p-2">{user.email}</td>
-                        <td className="border-2 border-gray-500 text-center p-2">{user.role === 0 ? 'Admin' : 'User'}</td>
+                        <td className="border-2 border-gray-500 text-center p-2">{user.role === 0 ? 'User' : 'Admin'}</td>
                     </tr>
                 </tbody>
             </table>
             <div>
-                <Link to={`/user/edit/${id}`}>
+                <Link to={`/api/user/edit/${id}`}>
                     <button type="button" className="bg-green-500 p-2 rounded-md">Edit User</button>
                 </Link>
             </div>

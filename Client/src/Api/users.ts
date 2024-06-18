@@ -22,9 +22,9 @@ export const updateUser = async (id: number, updatedUser: any) => {
     const res = await fetch(`https://localhost:7153/api/user/edit/${id}`, {
         method: 'PUT',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'data/form'
         },
-        body: JSON.stringify(updatedUser)
+        body: updatedUser
     });
 
     if (!res.ok) {

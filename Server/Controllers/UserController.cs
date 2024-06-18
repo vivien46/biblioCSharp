@@ -5,6 +5,7 @@ using Server.Models;
 using Server.Database;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using System.Linq.Expressions;
 
 
 namespace Server.Controllers
@@ -51,30 +52,39 @@ namespace Server.Controllers
         }
 
         [HttpPut("edit/{id}")]
-        public async Task<IActionResult> Update(int id, [FromForm] User formData)
+        public async Task<IActionResult> Update(int id, [FromForm] string username, [FromForm] string email, [FromForm] Role role)
         {
-            var userToUpdate = await _context.Users.FindAsync(id);
-            if (userToUpdate == null)
+            try
             {
-                return NotFound();
-            }
+                var userToUpdate = await _context.Users.FindAsync(id);
 
-            userToUpdate.Username = formData.Username ?? userToUpdate.Username;
-            userToUpdate.Email = formData.Email ?? userToUpdate.Email;
-            userToUpdate.Role = formData.Role != default ? formData.Role : userToUpdate.Role;
-           
-           if (Enum.IsDefined(typeof(Role), formData.Role))
+                if (userToUpdate == null)
+                {
+                    return NotFound();
+                }
+
+                userToUpdate.Username = username ?? userToUpdate.Username;
+                userToUpdate.Email = email ?? userToUpdate.Email;
+                userToUpdate.Role = role != default ? role : userToUpdate.Role;
+
+                if (Enum.IsDefined(typeof(Role), role))
+                {
+                    userToUpdate.Role = role;
+                }
+                else
+                {
+                    return BadRequest("Role invalide");
+                }
+
+                await _context.SaveChangesAsync();
+
+                return Ok(userToUpdate);
+            }
+            catch (Exception e)
             {
-                userToUpdate.Role = formData.Role;
+                Console.WriteLine($"Erreur: {e.Message}");
+                return BadRequest(e.Message);
             }
-            else
-            {
-                return BadRequest("Role invalide");
-            }
-
-            await _context.SaveChangesAsync();
-
-            return Ok(userToUpdate);
         }
 
         [HttpDelete("delete/{id}")]

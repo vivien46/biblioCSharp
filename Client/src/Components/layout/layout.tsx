@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 import UsersPage from '../../Pages/UsersPage';
 import HomePage from '../../Pages/HomePage';
+import ChangePasswordPage from '../../Pages/ChangePasswordPage';
+import ChangePasswordForm from '../Password/ChangePasswordForm';
 import RegisterForm from '../Users/RegisterForm';
 import User from '../Users/User';
 import UserEditForm from '../Users/UserEditForm';
@@ -89,6 +91,8 @@ const Layout: React.FC = () => {
                         <Route path='/api/user/:id' element={<User />} />
                         <Route path='/api/user/edit/:id' element={<UserEditForm />} />
                         <Route path='/api/user/delete/:id' element={<UserDelete />} />
+                        <Route path='/api/user/change-password' element={<ChangePasswordPage />} />
+                        <Route path='/api/user/change-password/:id' element={<ChangePasswordForm />} />
                         <Route path='/api/book' element={<BooksPage />} />
                         <Route path='/api/book/add' element={<BookAdd />} />
                         <Route path='/api/book/:id' element={<BookDetail />} />

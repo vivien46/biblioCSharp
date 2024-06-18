@@ -87,6 +87,40 @@ namespace Server.Controllers
             }
         }
 
+        [HttpPut("change-password/{id}")]
+        public async Task<IActionResult> ChangePassword(int id, [FromForm] string oldPassword, [FromForm] string newPassword)
+        {
+            try
+            {
+                var userToUpdate = await _context.Users.FindAsync(id);
+
+                if (userToUpdate == null)
+                {
+                    return NotFound();
+                }
+
+                var oldHashedBytes = SHA512.HashData(Encoding.UTF8.GetBytes(oldPassword));
+                var oldHashedPassword = BitConverter.ToString(oldHashedBytes).Replace("-", "").ToLower();
+
+                if (oldHashedPassword != userToUpdate.PasswordHash)
+                {
+                    return BadRequest("L'ancien mot de passe est incorrect");
+                }
+
+                var newHashedBytes = SHA512.HashData(Encoding.UTF8.GetBytes(newPassword));
+                userToUpdate.PasswordHash = BitConverter.ToString(newHashedBytes).Replace("-", "").ToLower();
+
+                await _context.SaveChangesAsync();
+
+                return Ok(userToUpdate);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Erreur: {e.Message}");
+                return BadRequest(e.Message);
+            }
+        }
+
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {

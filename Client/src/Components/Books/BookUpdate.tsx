@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getBookById, updateBook } from "../../Api/books";
+import { getBookById } from "../../Api/books";
 
 interface BookUpdateData {
     titre: string;
@@ -16,7 +16,7 @@ interface BookUpdateData {
 const BookUpdate: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const [book, setBook] = useState<BookUpdateData>({ titre: '', auteur: '', editeur: '', annee: 0, isbn: '', imageUrl: '', image: null, emprunts: [] });
+    const [book, setBook] = useState<BookUpdateData>({ titre: '', auteur: '', editeur: '', annee: 0, isbn: '', imageUrl: '', emprunts: [] });
     const [imageFile, setImageFile] = useState<File | null>(null);
 
     useEffect(() => {
@@ -28,7 +28,7 @@ const BookUpdate: React.FC = () => {
                 } else {
                     console.error("Livre non trouvé");
                 }
-            } catch (error) {
+            } catch (error: any) {
                 console.error("Impossible de charger les données :", error);
             }
         };
@@ -43,7 +43,11 @@ const BookUpdate: React.FC = () => {
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
+            if (imageFile) {
+                URL.revokeObjectURL(imageFile?.name);
+            }
             setImageFile(e.target.files[0]);
+            setBook({ ...book, image: e.target.files[0] });
         }
     };
 
@@ -57,17 +61,41 @@ const BookUpdate: React.FC = () => {
             formData.append("annee", book.annee.toString());
             formData.append("isbn", book.isbn);
             if (imageFile) {
-                formData.append("image", imageFile);
+                formData.append("image", imageFile as Blob);
+                setImageFile(imageFile);
+                formData.append("imageUrl", book.imageUrl);
             }
 
             console.log("Données du livre :", formData);
+            for (let pair of formData.entries()) {
+                console.log(pair[0]+ ': '+ pair[1]);
+            }
             console.log("Fichier image :", imageFile);
-
-         await updateBook(Number(id), formData);
         
-            navigate("/api/book");
+            const response = await fetch(`https://localhost:7153/api/book/edit/${id}`, {
+                method: "PUT",
+                body: formData
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Erreur lors de la mise à jour du livre. Statut: ${response.status}, Message: ${errorText}`);
+            }
+
+            const data = await response.json();
+            console.log("Livre mis à jour :", data);
+
+            window.alert("Le livre a été mis à jour avec succès");
+
+            navigate(`/api/book/${id}`);
         } catch (error) {
-            console.error("Impossible de mettre à jour le livre :", error);
+            if (error instanceof Error) {
+                console.error("Impossible de mettre à jour le livre :", error);
+                window.alert("Impossible de mettre à jour le livre: " + error.message || "Erreur inconnue");
+            } else {
+                console.error("Une erreur inconnue s'est produite :", error);
+                window.alert("Une erreur inconnue s'est produite");
+            }
         }
     };
     return (

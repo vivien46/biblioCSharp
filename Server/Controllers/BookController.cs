@@ -123,59 +123,59 @@ namespace Server.Controllers
 
 
         [HttpPut("edit/{id}")]
-public async Task<IActionResult> Update(int id, [FromForm] string titre, [FromForm] string auteur, [FromForm] string editeur, [FromForm] int annee, [FromForm] string isbn, [FromForm(Name = "image")] IFormFile image)
-{
-    try
-    {
-        var bookToUpdate = await _context.Livres.FindAsync(id);
-
-        if (bookToUpdate == null)
+        public async Task<IActionResult> Update(int id, [FromForm] string titre, [FromForm] string auteur, [FromForm] string editeur, [FromForm] int annee, [FromForm] string isbn, [FromForm] IFormFile? image)
         {
-            return NotFound("Livre non trouvé");
-        }
-
-        if (image != null && image.Length > 0)
-        {
-            var projectDirectory = Path.GetFullPath("..\\Client\\public");
-            Console.WriteLine($"projectDirectory: {projectDirectory}");
-
-            var imagePath = Path.Combine(projectDirectory, "assets\\Images\\Livres");
-            Console.WriteLine($"imagePath: {imagePath}");
-
-            if (!Directory.Exists(imagePath))
-                Directory.CreateDirectory(imagePath);
-
-            var fileName = Path.GetFileName(image.FileName);
-            var fullPath = Path.Combine(imagePath, fileName);
-
-            Console.WriteLine($"Tentative d'enregistrement de l'image à : {fullPath}");
-
-            using (var stream = new FileStream(fullPath, FileMode.Create))
+            try
             {
-                await image.CopyToAsync(stream);
+                var bookToUpdate = await _context.Livres.FindAsync(id);
+
+                if (bookToUpdate == null)
+                {
+                    return NotFound("Livre non trouvé");
+                }
+
+                if (image != null && image.Length > 0)
+                {
+                    var projectDirectory = Path.GetFullPath("..\\Client\\public");
+                    Console.WriteLine($"projectDirectory: {projectDirectory}");
+
+                    var imagePath = Path.Combine(projectDirectory, "assets\\Images\\Livres");
+                    Console.WriteLine($"imagePath: {imagePath}");
+
+                    if (!Directory.Exists(imagePath))
+                        Directory.CreateDirectory(imagePath);
+
+                    var fileName = Path.GetFileName(image.FileName);
+                    var fullPath = Path.Combine(imagePath, fileName);
+
+                    Console.WriteLine($"Tentative d'enregistrement de l'image à : {fullPath}");
+
+                    using (var stream = new FileStream(fullPath, FileMode.Create))
+                    {
+                        await image.CopyToAsync(stream);
+                    }
+
+                    Console.WriteLine($"Image enregistrée à : {fullPath}");
+
+                    bookToUpdate.ImageUrl = $"{fileName}";
+                }
+
+                bookToUpdate.Titre = titre;
+                bookToUpdate.Auteur = auteur;
+                bookToUpdate.Editeur = editeur;
+                bookToUpdate.Annee = annee;
+                bookToUpdate.ISBN = isbn;
+
+                await _context.SaveChangesAsync();
+
+                return Ok(bookToUpdate);
             }
-
-            Console.WriteLine($"Image enregistrée à : {fullPath}");
-
-            bookToUpdate.ImageUrl = $"{fileName}";
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erreur : {ex.Message}");
+                return StatusCode(500, "Erreur interne du serveur");
+            }
         }
-
-        bookToUpdate.Titre = titre;
-        bookToUpdate.Auteur = auteur;
-        bookToUpdate.Editeur = editeur;
-        bookToUpdate.Annee = annee;
-        bookToUpdate.ISBN = isbn;
-
-        await _context.SaveChangesAsync();
-
-        return Ok(bookToUpdate);
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Erreur : {ex.Message}");
-        return StatusCode(500, "Erreur interne du serveur");
-    }
-}
 
 
         [HttpDelete("delete/{id}")]

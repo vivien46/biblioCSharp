@@ -16,16 +16,16 @@ export const getBookById = async (id: number) => {
     return data;
 }
 
-export const updateBook = async (id: number, formData : FormData) => {
+// export const updateBook = async (id: number, formData : FormData) => {
 
-    const response = await fetch(`https://localhost:7153/api/book/edit/${id}`, {
-        method: "PUT",
-        body: formData
-    });
+//     const response = await fetch(`https://localhost:7153/api/book/edit/${id}`, {
+//         method: "PUT",
+//         body: formData
+//     });
 
-    if (!response.ok) {
-        return;
-    }
+//     if (!response.ok) {
+//         return;
+//     }
 
-    return await response.json();
-};
+//     return await response.json();
+// };

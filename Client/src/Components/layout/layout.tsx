@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 import UsersPage from '../../Pages/UsersPage';
 import HomePage from '../../Pages/HomePage';
+import AuthForm from '../../Pages/AuthForm';
+import Logout from '../../Pages/Logout';
 import ChangePasswordPage from '../../Pages/ChangePasswordPage';
 import ChangePasswordForm from '../Password/ChangePasswordForm';
 import RegisterForm from '../Users/RegisterForm';
@@ -17,8 +19,15 @@ const Layout: React.FC = () => {
     const [isUsersDropdownOpen, setIsUsersDropdownOpen] = useState(false);
     const [isBooksDropdownOpen, setIsBooksDropdownOpen] = useState(false);
 
+    const isUserLoggedIn = document.cookie.includes('Username');
+
     const releaseYear = 2024;
     const currentYear = new Date().getFullYear();
+
+    const username = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('Username'))
+        ?.split('=')[1];
 
     const toggleUsersDropdown = () => {
         setIsUsersDropdownOpen(!isUsersDropdownOpen);
@@ -70,16 +79,22 @@ const Layout: React.FC = () => {
                         </ul>
                     </nav>
                     <div className="relative">
-
                         <ul className="px-3-2 py-2 uppercase flex">
-                            <li>
-                                <Link to="/api/user/register" className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700">Sign Up</Link>
-                            </li>
-                            <li>
-                                <Link to="/api/user/login" className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700">Sign In</Link>
-                            </li>
+                            {!isUserLoggedIn && (
+                                <li>
+                                    <Link to="/api/user/register" className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700">Sign Up</Link>
+                                </li>
+                            )}
+                            {isUserLoggedIn ? (
+                                <li>
+                                    <span className='text-gray-500'>{username}</span><Link to="/api/user/logout" className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700">Log Out</Link>
+                                </li>
+                            ) : (
+                                <li>
+                                    <Link to="/api/user/login" className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700">Log In</Link>
+                                </li>
+                            )}
                         </ul>
-
                     </div>
                 </header>
 
@@ -88,6 +103,8 @@ const Layout: React.FC = () => {
                         <Route path='/' element={<HomePage />} />
                         <Route path='/api/user' element={<UsersPage />} />
                         <Route path='/api/user/register' element={<RegisterForm />} />
+                        <Route path='/api/user/login' element={<AuthForm />} />
+                        <Route path='/api/user/logout' element={<Logout />} />
                         <Route path='/api/user/:id' element={<User />} />
                         <Route path='/api/user/edit/:id' element={<UserEditForm />} />
                         <Route path='/api/user/delete/:id' element={<UserDelete />} />

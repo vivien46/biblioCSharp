@@ -14,9 +14,9 @@ const HomePage: React.FunctionComponent = () => {
             <p className='text-center text-lg'>Pour commencer, veuillez cliquer sur
                 <a href='/api/user/register' className='text-blue-500 hover:underline'> Sign Up</a>
             </p>
-            {/* <p className='text-center text-lg'>Si vous avez déjà un compte, veuillez cliquer sur
+            <p className='text-center text-lg'>Si vous avez déjà un compte, veuillez cliquer sur
                 <a href='/api/user/login' className='text-blue-500 hover:underline'> Sign In</a>
-            </p> */}
+            </p>
             
         </div>
     );

@@ -12,6 +12,17 @@ builder.Environment.WebRootPath = Path.GetFullPath("..\\Client\\public");
 // Add services to the container.
 builder.Services.AddControllers();
 
+builder.Services.AddDistributedMemoryCache();
+
+// Add Session
+builder.Services.AddSession(options =>
+{
+    options.Cookie.Name = ".BiblioSession.Session";
+    options.IdleTimeout = TimeSpan.FromMinutes(15);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 // Add Database Context
 builder.Services.AddDbContext<DataContext>(options =>
 {
@@ -50,6 +61,11 @@ app.UseHttpsRedirection();
 
 // Enable CORS
 app.UseCors("AllowAny");
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseSession();
 
 app.MapControllers();
 

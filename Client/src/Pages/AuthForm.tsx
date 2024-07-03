@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import Cookies from 'js-cookie';
 
 const AuthForm: React.FC = () => {
     const [username, setusername] = useState('');
@@ -10,6 +11,15 @@ const AuthForm: React.FC = () => {
     const [countdown, setCountdown] = useState<number | null>(null);
     const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const userId = Cookies.get('UserId');
+        const usernameCookie = Cookies.get('Username');
+        if (userId && usernameCookie) {
+            setIsUserLoggedIn(true);
+            setusername(usernameCookie);
+        }
+    }, []);
 
     const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setusername(e.target.value);
@@ -31,20 +41,22 @@ const AuthForm: React.FC = () => {
                 method: 'POST',
                 body: formData
             });
-            console.log(username, password);
 
             if (response.ok) {
                 const data = await response.json();
-                document.cookie = `UserId=${data.id}; path=/; httpOnly=true;`;
-                document.cookie = `Username=${data.username}; path=/; httpOnly=true;`;
+                Cookies.set ('UserId', data.id.toString(), { path: '/'});
+                Cookies.set  ('Username', data.username, { path: '/'});
+                setIsUserLoggedIn(true);
+                setusername(data.username);
                 navigate('/');
                 setMessage('Connexion réussie ! Vous serez redirigé dans ');
                 setCountdown(5);
-                setIsUserLoggedIn(true);
+
             } else {
-                setMessage('Invalid username or password');
+                setMessage("Nom d'utilisateur ou mot de passe incorrect");
             }
-        } catch (message) {
+        } catch (error) {
+            console.error(error);
             setMessage('Une erreur est survenue');
         }
     }

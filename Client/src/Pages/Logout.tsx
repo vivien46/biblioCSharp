@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../Contexts/AuthContext';
+import Cookies from 'js-cookie';
 
 const Logout: React.FC = () => {
-    const [showConfirmation, setShowConfirmation] = useState(false);
-    const navigate = useNavigate(); // Assurez-vous d'importer useNavigate de 'react-router-dom'
+    const { setIsUserLoggedIn } = useAuth();
+    const [showModal, setShowModal] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const handleLogout = async () => {
+        setLoading(true);
         try {
             const response = await fetch('https://localhost:7153/api/user/logout', {
                 method: 'POST',
@@ -13,35 +18,47 @@ const Logout: React.FC = () => {
 
             if (response.ok) {
                 // Supprimez les cookies
-                document.cookie = 'UserId=; path=/;';
-                document.cookie = 'Username=; path=/;';
-                
-                // Redirigez l'utilisateur vers la page de connexion
-                navigate('/api/user/login');
+                Cookies.remove('UserId', { path: '/' });
+                Cookies.remove('Username', { path: '/' });
+                setIsUserLoggedIn(false);
+
+                // Redirigez l'utilisateur vers l'index après la déconnexion
+                navigate('/');
             } else {
                 console.error('Failed to logout');
             }
         } catch (error) {
             console.error('An error occurred while logging out', error);
+        } finally {
+            setLoading(false);
         }
     };
 
-    const handleConfirmation = () => {
-        setShowConfirmation(true);
+    const handleLogoutConfirmation = () => {
+        setShowModal(true);
     };
 
     const handleCancel = () => {
-        setShowConfirmation(false);
+        setShowModal(false);
     };
 
     return (
         <div>
-            <button onClick={handleConfirmation}>Logout</button>
-            {showConfirmation && (
-                <div>
-                    <p>Are you sure you want to logout?</p>
-                    <button onClick={handleLogout}>Yes</button>
-                    <button onClick={handleCancel}>No</button>
+            <h1>Déconnexion</h1>
+
+            {loading ? (
+                <p>Déconnexion en cours...</p>
+            ) : (
+                <button onClick={handleLogoutConfirmation}>Se déconnecter</button>
+            )}
+
+            {showModal && (
+                <div className="modal">
+                    <div className="modal-content">
+                        <p>Êtes-vous sûr de vouloir vous déconnecter ?</p>
+                        <button onClick={handleLogout}>Oui</button>
+                        <button onClick={handleCancel}>Non</button>
+                    </div>
                 </div>
             )}
         </div>

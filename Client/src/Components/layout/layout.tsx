@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
+import { AuthProvider, useAuth } from '../../Contexts/AuthContext';
+
 import UsersPage from '../../Pages/UsersPage';
 import HomePage from '../../Pages/HomePage';
 import AuthForm from '../../Pages/AuthForm';
@@ -16,18 +18,18 @@ import BookDetail from '../Books/BookDetail';
 import BookUpdate from '../Books/BookUpdate';
 
 const Layout: React.FC = () => {
+    const {isUserLoggedIn, username, checkUserLoggedIn} = useAuth();
+
     const [isUsersDropdownOpen, setIsUsersDropdownOpen] = useState(false);
     const [isBooksDropdownOpen, setIsBooksDropdownOpen] = useState(false);
 
-    const isUserLoggedIn = document.cookie.includes('Username');
 
     const releaseYear = 2024;
     const currentYear = new Date().getFullYear();
 
-    const username = document.cookie
-        .split('; ')
-        .find(row => row.startsWith('Username'))
-        ?.split('=')[1];
+    useEffect(() => {
+        checkUserLoggedIn();
+    }, [checkUserLoggedIn]);
 
     const toggleUsersDropdown = () => {
         setIsUsersDropdownOpen(!isUsersDropdownOpen);
@@ -38,6 +40,7 @@ const Layout: React.FC = () => {
     };
 
     return (
+        <AuthProvider>
         <Router>
             <div className="font-sans text-black antialiased flex flex-col min-h-screen">
                 <header className="flex items-center justify-between p-6 bg-black border-b border-gray-200">
@@ -82,12 +85,12 @@ const Layout: React.FC = () => {
                         <ul className="px-3-2 py-2 uppercase flex">
                             {!isUserLoggedIn && (
                                 <li>
-                                    <Link to="/api/user/register" className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700">Sign Up</Link>
+                                    <Link to="/api/user/register" className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700">Register</Link>
                                 </li>
                             )}
                             {isUserLoggedIn ? (
                                 <li>
-                                    <span className='text-gray-500'>{username}</span><Link to="/api/user/logout" className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700">Log Out</Link>
+                                    <span className='text-red-500 capitalize'>Bienvenue {username}</span><Link to="/api/user/logout" className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700">Log Out</Link>
                                 </li>
                             ) : (
                                 <li>
@@ -122,6 +125,7 @@ const Layout: React.FC = () => {
                 </footer>
             </div>
         </Router>
+        </AuthProvider>
     );
 };
 

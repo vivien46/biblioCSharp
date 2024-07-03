@@ -52,8 +52,9 @@ namespace Server.Controllers
         [HttpPost("logout")]
         public IActionResult Logout()
         {
-            HttpContext.Session.Remove("UserId");
-            HttpContext.Session.Remove("Username");
+            // HttpContext.Session.Remove("UserId");
+            // HttpContext.Session.Remove("Username");
+            HttpContext.Session.Clear();
             return Ok();
         }
 

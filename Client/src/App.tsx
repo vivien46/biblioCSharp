@@ -1,13 +1,16 @@
-import Layout from './Components/layout/layout'
+import React from 'react';
+import { AuthProvider } from './Contexts/AuthContext';
+import Layout from './Components/layout/layout';
+import './index.css';
 
-function App() {
-
+const App: React.FC = () => {
   return (
-      <>
-        <Layout  />
-        
-      </>
-  )
-}
+      <AuthProvider>
+          <div className="App">
+              <Layout />
+          </div>
+      </AuthProvider>
+  );
+};
 
 export default App

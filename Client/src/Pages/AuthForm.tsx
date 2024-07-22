@@ -4,8 +4,9 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import Cookies from 'js-cookie';
 
 const AuthForm: React.FC = () => {
-    const [username, setusername] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [role, setRole] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [message, setMessage] = useState('');
     const [countdown, setCountdown] = useState<number | null>(null);
@@ -15,14 +16,16 @@ const AuthForm: React.FC = () => {
     useEffect(() => {
         const userId = Cookies.get('UserId');
         const usernameCookie = Cookies.get('Username');
-        if (userId && usernameCookie) {
+        const userRoleCookie = Cookies.get('Role');
+        if (userId && usernameCookie && userRoleCookie) {
             setIsUserLoggedIn(true);
-            setusername(usernameCookie);
+            setUsername(usernameCookie);
+            setRole(Number(userRoleCookie) === 0 ? 'Admin' : '');
         }
     }, []);
 
     const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setusername(e.target.value);
+        setUsername(e.target.value);
     };
 
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,8 +49,10 @@ const AuthForm: React.FC = () => {
                 const data = await response.json();
                 Cookies.set ('UserId', data.id.toString(), { path: '/'});
                 Cookies.set  ('Username', data.username, { path: '/'});
+                Cookies.set ('Role', data.role.toString(), { path: '/'});
                 setIsUserLoggedIn(true);
-                setusername(data.username);
+                setUsername(data.username);
+                setRole(data.role === 1 ? 'Admin' : '');
                 navigate('/');
                 setMessage('Connexion réussie ! Vous serez redirigé dans ');
                 setCountdown(5);
@@ -105,7 +110,7 @@ const AuthForm: React.FC = () => {
                                 placeholder='password'
                             />
                             <div className="absolute top-2/3 left-44 transform -translate-y-1/2 cursor-pointer">
-                                <button onClick={() => setShowPassword(!showPassword)} className="text-sm mt-2">
+                                <button type='button' onClick={() => setShowPassword(!showPassword)} className="text-sm mt-2">
                                     { showPassword ? <FaEye /> : <FaEyeSlash /> } 
                                 </button>
                             </div>

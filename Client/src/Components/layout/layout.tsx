@@ -7,7 +7,9 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const { isUserLoggedIn, username, checkUserLoggedIn } = useAuth();
+  const { isUserLoggedIn, username, userRole, checkUserLoggedIn } = useAuth();
+
+  console.log('Utilisateur : ' + username,'Role :'+ userRole);
 
   const [isUsersDropdownOpen, setIsUsersDropdownOpen] = useState(false);
   const [isBooksDropdownOpen, setIsBooksDropdownOpen] = useState(false);
@@ -76,7 +78,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             )}
             {isUserLoggedIn ? (
               <li>
-                <span className='text-red-500 capitalize'>Bienvenue {username}</span><Link to="/api/user/logout" className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700">Log Out</Link>
+                <span className='text-red-500 capitalize'>{username} {userRole === "Admin" ? (`${userRole}`) : ""}</span><Link to="/api/user/logout" className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700">Log Out</Link>
               </li>
             ) : (
               <li>

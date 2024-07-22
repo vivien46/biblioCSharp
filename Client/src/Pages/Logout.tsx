@@ -20,6 +20,7 @@ const Logout: React.FC = () => {
                 // Supprimez les cookies
                 Cookies.remove('UserId', { path: '/' });
                 Cookies.remove('Username', { path: '/' });
+                Cookies.remove('UserRole', { path: '/' });
                 setIsUserLoggedIn(false);
 
                 // Redirigez l'utilisateur vers l'index après la déconnexion
@@ -49,7 +50,9 @@ const Logout: React.FC = () => {
             {loading ? (
                 <p>Déconnexion en cours...</p>
             ) : (
-                <button onClick={handleLogoutConfirmation}>Se déconnecter</button>
+                <div>
+                <button onClick={handleLogoutConfirmation} className='btn bg-red-500'>Se déconnecter</button>
+                </div>
             )}
 
             {showModal && (

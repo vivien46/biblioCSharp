@@ -33,6 +33,7 @@ namespace Server.Controllers
             {
                 HttpContext.Session.SetString("UserId", user.Id.ToString());
                 HttpContext.Session.SetString("Username", user.Username.ToString());
+                HttpContext.Session.SetString("Role", user.Role.ToString());
                 return Ok(user);
             }
             return Unauthorized();

@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const RegisterForm: React.FunctionComponent = () => {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const [message, setMessage] = useState("");
     const navigate = useNavigate();
 
@@ -47,7 +49,14 @@ const RegisterForm: React.FunctionComponent = () => {
                     <input type="email" id="email" name="email" value={email} onChange={e => setEmail(e.target.value)} className="border-2 border-gray-500 rounded p-1 mb-5" />
 
                     <label htmlFor="password" className="text-center font-medium text-lg">Password</label>
-                    <input type="password" id="password" name="password" value={password} onChange={e => setPassword(e.target.value)} className="border-2 border-gray-500 rounded p-1 mb-5" />
+                    <div className="mb-4 relative">
+                        <input type={showPassword ? "text" : "password"} id="password" name="password" value={password} onChange={e => setPassword(e.target.value)} className="border-2 border-gray-500 rounded p-1 mb-5 w-full" />
+                        <div className="absolute right-1 top-0">
+                            <button type="button" onClick={() => setShowPassword(!showPassword)} className="h-5 text-sm mt-2 p-1">
+                                { showPassword ? <FaEyeSlash className="h-5 w-5 text-gray-500" /> : <FaEye className="h-5 w-5 text-gray-500" /> } 
+                            </button>
+                        </div>
+                    </div>
 
                     <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Register</button>
                 </form>

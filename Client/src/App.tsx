@@ -15,6 +15,8 @@ import BooksPage from './Pages/BooksPage';
 import BookAdd from './Components/Books/BookAdd';
 import BookDetail from './Components/Books/BookDetail';
 import BookUpdate from './Components/Books/BookUpdate';
+import AddEmpruntForm from './Components/Emprunts/AddEmpruntForm';
+import EmpruntList from './Components/Emprunts/EmpruntList';
 import './index.css';
 
 const App: React.FC = () => {
@@ -36,6 +38,9 @@ const App: React.FC = () => {
           <Route path='/api/book/add' element={<BookAdd />} />
           <Route path='/api/book/:id' element={<BookDetail />} />
           <Route path='/api/book/edit/:id' element={<BookUpdate />} />
+          <Route path='/api/book/delete/:id' element={<BookDetail />} />
+          <Route path='/api/emprunt/add' element={<AddEmpruntForm />} />
+          <Route path='/api/emprunt' element={<EmpruntList />} />
         </Routes>
       </Layout>
     </Router>

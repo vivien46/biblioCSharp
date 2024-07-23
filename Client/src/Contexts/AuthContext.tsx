@@ -39,7 +39,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
         if (userId && usernameCookie && userRoleCookie) {
             setIsUserLoggedIn(true);
             setUsername(usernameCookie);
-            setUserRole(Number(userRoleCookie) === 1 ? 'Admin' : '');
+            setUserRole(Number(userRoleCookie) === 1 ? 'Admin' : 'User');
         }
     };
 

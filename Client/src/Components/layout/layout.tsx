@@ -9,8 +9,6 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { isUserLoggedIn, username, userRole, checkUserLoggedIn } = useAuth();
 
-  console.log('Utilisateur : ' + username,'Role :'+ userRole);
-
   const [isUsersDropdownOpen, setIsUsersDropdownOpen] = useState(false);
   const [isBooksDropdownOpen, setIsBooksDropdownOpen] = useState(false);
 
@@ -67,6 +65,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 </ul>
               )}
             </li>
+
           </ul>
         </nav>
         <div className="relative">

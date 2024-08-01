@@ -1,53 +1,39 @@
-import { useEffect, useState } from "react";
+export const empruntsApi = async () => {
+    const res = await fetch("https://localhost:7153/api/emprunt");
 
-// Interface pour représenter les données d'un emprunt
-interface Emprunt {
-    id: number;
-    dateEmprunt: Date;
-    dateRetour: Date;
-    livre: {
-        id: number;
-        titre: string;
-    };
-    user: {
-        id: number;
-        nom: string;
-    };
+    if (!res.ok) {
+        throw new Error("Impossible de charger les données");
+    }
+    const data = await res.json();
+    return data;
 }
 
-// Custom hook pour récupérer les emprunts
-function useEmprunts() {
-    const [emprunts, setEmprunts] = useState<Emprunt[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+export const getEmpruntById = async (id: number) => {
+    const res = await fetch(`https://localhost:7153/api/emprunt/${id}`);
 
-    useEffect(() => {
-        const fetchEmprunts = async () => {
-            setIsLoading(true);
-            setError(null);
-            try {
-                const res = await fetch("https://localhost:7153/api/emprunt");
-                if (!res.ok) {
-                    throw new Error("Impossible de charger les emprunts");
-                }
-                const data: Emprunt[] = await res.json();
-                setEmprunts(data);
-            } catch (error) {
-                if (error instanceof Error) {
-                    setError(error.message);
-                } else {
-                    setError('Une erreur inconnue s\'est produite.');
-                }
-                
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchEmprunts();
-    }, []);
-
-    return { emprunts, isLoading, error };
+    if (!res.ok) {
+        throw new Error("Impossible de charger les données");
+    }
+    const data = await res.json();
+    return data;
 }
 
-export default useEmprunts;
+export const updateEmprunt = async (id: number, updatedEmprunt: any) => {
+    const res = await fetch(`https://localhost:7153/api/emprunt/edit/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'data/form'
+        },
+        body: updatedEmprunt
+    });
+
+    if (!res.ok) {
+        throw new Error("Impossible de mettre à jour l'emprunt");
+    }
+
+    // Attendre que le corps de la réponse soit parsé en JSON
+    const emprunt = await res.json();
+    console.log(emprunt); // Afficher le contenu du corps de la réponse
+
+    return emprunt;
+}

@@ -17,7 +17,6 @@ import BookDetail from './Components/Books/BookDetail';
 import BookUpdate from './Components/Books/BookUpdate';
 import AddEmpruntForm from './Components/Emprunts/AddEmpruntForm';
 import EmpruntList from './Components/Emprunts/EmpruntList';
-import EmpruntList from './Components/Emprunts/EmpruntList';
 import './index.css';
 
 const App: React.FC = () => {

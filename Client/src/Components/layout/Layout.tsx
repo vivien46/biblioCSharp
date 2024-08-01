@@ -65,14 +65,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 </ul>
               )}
             </li>
-            <li className="relative">
-              <button className="py-1 space-x-2 rounded-md text-sm font-medium uppercase text-gray-300 hover:text-white hover:bg-gray-700 transition duration-150 focus:outline-none">Emprunt</button>
-              <ul className="absolute mt-1 py-2 bg-white border border-gray-200 rounded-md shadow-lg z-10">
-                <li>
-                  <Link to="/api/emprunt" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Emprunts List</Link>
-                </li>
-              </ul>
-            </li>
+
           </ul>
         </nav>
         <div className="relative">

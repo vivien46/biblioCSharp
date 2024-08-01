@@ -8,7 +8,14 @@ interface Emprunt {
   dateRetour: string;
   livreId: number;
   userId: number;
-}
+    livre: {
+      titre: string;
+      imageUrl: string;
+    };
+    user: {
+      username: string;
+    };
+  }
 
 const EmpruntList: React.FC = () => {
   const [emprunts, setEmprunts] = useState<Emprunt[]>([]);
@@ -48,8 +55,8 @@ const EmpruntList: React.FC = () => {
               const livre = await getBookById(emprunt.livreId);
               return {
                 ...emprunt,
-                userId: user.username, // Assurez-vous que user.username existe
-                livreId: livre.titre, // Assurez-vous que livre.titre existe
+                user,
+                livre,
               };
             })
           );
@@ -69,18 +76,18 @@ const EmpruntList: React.FC = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Liste des emprunts</h1>
+      <h1 className="text-2xl font-bold text-center mb-4">Liste des emprunts</h1>
       {error ? (
         <p className="text-red-500">{error}</p>
       ) : (
         <table className="min-w-full border border-gray-300">
           <thead>
             <tr className="bg-gray-100">
-              <th className="py-2 px-4 border-b">Id</th>
+              
               <th className="py-2 px-4 border-b">Date d'emprunt</th>
               <th className="py-2 px-4 border-b">Date de retour</th>
               <th className="py-2 px-4 border-b">Livre</th>
-              <th className="py-2 px-4 border-b">Utilisateur</th>
+              <th className="py-2 px-4 border-b">Emprunteur</th>
             </tr>
           </thead>
           <tbody>
@@ -89,11 +96,24 @@ const EmpruntList: React.FC = () => {
               const dateRetour = new Date(emprunt.dateRetour).toLocaleDateString();
               return (
                 <tr key={emprunt.id} className="border-b">
-                  <td className="py-2 px-4 text-center">{emprunt.id}</td>
+                  
                   <td className="py-2 px-4 text-center">{dateEmprunt}</td>
                   <td className="py-2 px-4 text-center">{dateRetour}</td>
-                  <td className="py-2 px-4 text-center">{emprunt.livreId}</td>
-                  <td className="py-2 px-4 text-center">{emprunt.userId}</td>
+                  <td className="py-2 px-4 text-center">
+                    <div className="flex flex-col items-center">
+                      <span className="font-bold mb-1">{emprunt.livre.titre}</span>
+                      {emprunt.livre.imageUrl ? (
+                        <img
+                          src={`/assets/Images/Livres/${emprunt.livre.imageUrl}`}
+                          alt={emprunt.livre.titre}
+                          className="h-40 w-30 mb-5"
+                        />
+                      ) : (
+                        <p className="text-sm text-gray-500">Pas d'image</p>
+                      )}
+                    </div>
+                  </td>
+                  <td className="py-2 px-4 text-center font-bold">{emprunt.user.username}</td>
                 </tr>
               );
             })}

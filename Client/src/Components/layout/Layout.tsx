@@ -11,6 +11,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const [isUsersDropdownOpen, setIsUsersDropdownOpen] = useState(false);
   const [isBooksDropdownOpen, setIsBooksDropdownOpen] = useState(false);
+  const [isEmpruntDropdownOpen, setIsEmpruntDropdownOpen] = useState(false);
 
   const releaseYear = 2024;
   const currentYear = new Date().getFullYear();
@@ -25,6 +26,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const toggleBooksDropdown = () => {
     setIsBooksDropdownOpen(!isBooksDropdownOpen);
+  };
+
+  const toggleEmpruntDropdown = () => {
+    setIsEmpruntDropdownOpen(!isEmpruntDropdownOpen);
   };
 
   return (
@@ -66,9 +71,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               )}
             </li>
             <li className='relative'>
-              <button className="py-1 space-x-2 rounded-md text-sm font-medium uppercase text-gray-300 hover:text-white hover:bg-gray-700 transition duration-150 focus:outline-none">
+              <button onClick={toggleEmpruntDropdown} className="py-1 space-x-2 rounded-md text-sm font-medium uppercase text-gray-300 hover:text-white hover:bg-gray-700 transition duration-150 focus:outline-none">
                 Emprunts
               </button>
+              { isEmpruntDropdownOpen && (
               <ul className="absolute mt-1 py-2 bg-white border border-gray-200 rounded-md shadow-lg z-10">
                 <li>
                   <Link to="/api/emprunt" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Liste des emprunts</Link>
@@ -77,6 +83,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <Link to="/api/emprunt/add" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Ajouter un emprunt</Link>
                 </li>
                 </ul>
+                )}
             </li>
           </ul>
         </nav>
@@ -89,7 +96,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             )}
             {isUserLoggedIn ? (
               <li>
-                <span className='text-red-500 capitalize'>{username} {userRole === "Admin" ? (`${userRole}`) : ""}</span><Link to="/api/user/logout" className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700">Log Out</Link>
+                <span className='text-red-500 capitalize'>{username} ( {userRole === "Admin" ? (`${userRole}`) : ""} )</span><Link to="/api/user/logout" className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700">Log Out</Link>
               </li>
             ) : (
               <li>

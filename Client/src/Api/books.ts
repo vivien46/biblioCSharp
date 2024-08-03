@@ -13,6 +13,7 @@ export const getBookById = async (id: number) => {
         throw new Error("Impossible de charger les données");
     }
     const data = await res.json();
+    
     return data;
 }
 

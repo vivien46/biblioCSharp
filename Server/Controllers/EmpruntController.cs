@@ -27,7 +27,7 @@ namespace Server.Controllers
                 .Include(e => e.Livre)
                 .ToListAsync();
             return Ok(emprunts);
-          
+
         }
 
         [HttpGet("{id}")]
@@ -47,17 +47,42 @@ namespace Server.Controllers
         }
 
         [HttpPost("add")]
-        public async Task<ActionResult<Emprunt>> CreateEmprunt([FromForm] Emprunt emprunt)
+        public async Task<ActionResult<Emprunt>> CreateEmprunt([FromForm] DateTime DateEmprunt, [FromForm] DateTime DateRetour, [FromForm] string LivreTitre, [FromForm] string Username)
         {
+            DateEmprunt = DateTime.SpecifyKind(DateEmprunt, DateTimeKind.Local).ToUniversalTime();
+            DateRetour = DateTime.SpecifyKind(DateRetour, DateTimeKind.Local).ToUniversalTime();
+
+            var livre = await _context.Livres.FirstOrDefaultAsync(l => l.Titre == LivreTitre);
+            if (livre == null)
+            {
+                return BadRequest("Livre non trouvé.");
+            }
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == Username);
+            if (user == null)
+            {
+                return BadRequest("Utilisateur non trouvé.");
+            }
+
+            var emprunt = new Emprunt
+            {
+                DateEmprunt = DateEmprunt,
+                DateRetour = DateRetour,
+                LivreId = livre.Id,
+                UserId = user.Id
+            };
+
             if (emprunt == null)
             {
                 return BadRequest("Emprunt non valide.");
             }
 
-            Console.WriteLine($"DateEmprunt: {emprunt.DateEmprunt}, DateRetour: {emprunt.DateRetour}, LivreId: {emprunt.LivreId}, UserId: {emprunt.UserId}");
-            
             _context.Emprunts.Add(emprunt);
             await _context.SaveChangesAsync();
+
+            emprunt.DateEmprunt = emprunt.DateEmprunt.ToLocalTime();
+            emprunt.DateRetour = emprunt.DateRetour.ToLocalTime();
+
             return CreatedAtAction(nameof(GetEmprunt), new { id = emprunt.Id }, emprunt);
         }
 

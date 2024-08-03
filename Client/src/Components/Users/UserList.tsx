@@ -63,7 +63,7 @@ const UserList: React.FC = () => {
             </tr>
           </thead>
           <tbody className="border-2 border-gray-500">
-            {users.map((user: any, index: number) => (
+            {users.map((user: any) => (
               <tr key={user.id} className="border-2 border-gray-500">
                 <td className="border-2 border-gray-500 text-center p-2">{user.username}</td>
                 <td className="border-2 border-gray-500 text-center p-2">{user.email}</td>

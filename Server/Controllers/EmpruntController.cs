@@ -46,9 +46,16 @@ namespace Server.Controllers
             return Ok(emprunt);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Emprunt>> CreateEmprunt(Emprunt emprunt)
+        [HttpPost("add")]
+        public async Task<ActionResult<Emprunt>> CreateEmprunt([FromForm] Emprunt emprunt)
         {
+            if (emprunt == null)
+            {
+                return BadRequest("Emprunt non valide.");
+            }
+
+            Console.WriteLine($"DateEmprunt: {emprunt.DateEmprunt}, DateRetour: {emprunt.DateRetour}, LivreId: {emprunt.LivreId}, UserId: {emprunt.UserId}");
+            
             _context.Emprunts.Add(emprunt);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetEmprunt), new { id = emprunt.Id }, emprunt);

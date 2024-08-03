@@ -39,6 +39,7 @@ const App: React.FC = () => {
           <Route path='/api/book/:id' element={<BookDetail />} />
           <Route path='/api/book/edit/:id' element={<BookUpdate />} />
           <Route path='/api/emprunt' element={<EmpruntList />} />
+          <Route path='/api/emprunt/add' element={<AddEmpruntForm />} />
 
         </Routes>
       </Layout>

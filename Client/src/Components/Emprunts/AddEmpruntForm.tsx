@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { usersApi } from '../../Api/users';
 import { useNavigate } from 'react-router-dom';
 
 const AddEmpruntForm: React.FC = () => {
@@ -9,9 +10,49 @@ const AddEmpruntForm: React.FC = () => {
     const [livreId, setLivreId] = useState<number | null>(null);
     const [userId, setUserId] = useState<number | null>(null);
     const [username, setUsername] = useState<string>('');
+    const [livres, setLivres] = useState<{ id: number; titre: string }[]>([]);
+    const [users, setUsers] = useState<{ id: number; username: string }[]>([]);
     const [error, setError] = useState<string | null>(null);
 
     const navigate = useNavigate();
+
+    const fetchLivres = async () => {
+        try {
+            const response = await fetch('https://localhost:7153/api/book');
+            if (!response.ok) {
+                throw new Error('Erreur de récupération des livres');
+              }
+              const data = await response.json();
+              
+              if (data && data.$values){
+                setLivres(data.$values);
+              } else {
+                throw new Error('Format de réponses API inattendu');
+              }
+              
+            } catch (error) {
+              console.error('Erreur lors de la récupération des livres', error);
+              setError('Erreur lors de la récupération des livres');
+            }
+          }
+    
+    const fetchUsers = async () => {
+        try {
+            const response = await fetch('https://localhost:7153/api/user');
+            if (!response.ok) {
+                throw new Error('Erreur de récupération des utilisateurs');
+              }
+              const data = await response.json();
+              if (data && data.$values){
+                setUsers(data.$values);
+              } else {
+                throw new Error('Format de réponses API inattendu');
+              }
+            } catch (error) {
+              console.error('Erreur lors de la récupération des utilisateurs', error);
+              setError('Erreur lors de la récupération des utilisateurs');
+            }
+          }
 
     const fetchLivreId = async (titre: string) => {
         try{
@@ -20,12 +61,14 @@ const AddEmpruntForm: React.FC = () => {
                 throw new Error('Erreur de récupération de l\'ID du livre');
               }
               const data = await response.json();
-              if (data.length === 0) {
+
+              console.log(data);
+              if (data && data.$values && Array.isArray(data.$values) && data.$values.length > 0) {
+                setLivreId(data.$values.id);
+                setLivres(data.$values);
+              } else {
                 setError('Livre non trouvé');
                 setLivreId(null);
-              } else {
-                setLivreId(data[0].id);
-                setError(null);
               }
             } catch (error) {
               console.error('Erreur lors de la recherche du livre', error);
@@ -40,18 +83,23 @@ const AddEmpruntForm: React.FC = () => {
                 throw new Error('Erreur de récupération de l\'ID de l\'utilisateur');
               }
               const data = await response.json();
-              if (data.length === 0) {
+              if (data && data.$values && Array.isArray(data.$values) && data.$values.length > 0) {
+                setUserId(data.$values.id);
+              } else {
+                setError(null);
                 setError('Utilisateur non trouvé');
                 setUserId(null);
-              } else {
-                setUserId(data[0].id);
-                setError(null);
               }
             } catch (error) {
               console.error('Erreur lors de la recherche de l\'utilisateur', error);
               setError('Erreur lors de la recherche de l\'utilisateur');
             }
           };
+
+          useEffect(() => {
+            fetchLivres();
+            fetchUsers();
+          }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -79,8 +127,11 @@ const AddEmpruntForm: React.FC = () => {
           setDateRetour('');
           setLivreTitre('');
           setLivreId(null);
+          setUsers([]);
           setUsername('');
           setUserId(null);
+         
+
 
           navigate('/api/emprunt');
 
@@ -99,6 +150,7 @@ const AddEmpruntForm: React.FC = () => {
           <input
             type="date"
             id="dateEmprunt"
+            name='DateEmprunt'
             value={dateEmprunt}
             onChange={(e) => setDateEmprunt(e.target.value)}
             required
@@ -110,6 +162,7 @@ const AddEmpruntForm: React.FC = () => {
           <input
             type="date"
             id="dateRetour"
+            name='DateRetour'
             value={dateRetour}
             onChange={(e) => setDateRetour(e.target.value)}
             required
@@ -118,33 +171,47 @@ const AddEmpruntForm: React.FC = () => {
         </div>
         <div className="mb-4">
           <label htmlFor="livreTitle" className="block text-sm font-medium text-gray-700">Titre du Livre</label>
-          <input
-            type="text"
-            id="livreTitle"
-            value={livreTitre}
-            onChange={(e) => {
-              setLivreTitre(e.target.value);
-              // Rechercher l'ID du livre lorsque le titre change
-              fetchLivreId(e.target.value);
-            }}
-            required
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-          />
+          <select
+                        id="livreTitle"
+                        name='LivreTitle'
+                        value={livreTitre}
+                        onChange={(e) => {
+                            setLivreTitre(e.target.value);
+                            // Rechercher l'ID du livre lorsque le titre change
+                            fetchLivreId(e.target.value);
+                        }}
+                        required
+                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                    >
+                        <option value="">Select a livre</option>
+                        {livres.map((livre) => (
+                            <option key={livre.id} value={livre.titre}>
+                                {livre.titre}
+                            </option>
+                        ))}
+                    </select>
         </div>
         <div className="mb-4">
           <label htmlFor="username" className="block text-sm font-medium text-gray-700">Nom d'Utilisateur</label>
-          <input
-            type="text"
-            id="username"
-            value={username}
-            onChange={(e) => {
-              setUsername(e.target.value);
-              // Rechercher l'ID de l'utilisateur lorsque le username change
-              fetchUserId(e.target.value);
-            }}
-            required
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-          />
+          <select
+                  id='username'
+                  value={username}
+                  onChange={(e) => {
+                    setUsername(e.target.value);
+                    // Rechercher l'ID de l'utilisateur lorsque le nom change
+                    fetchUserId(e.target.value);
+                }}
+                required
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+            >
+                <option value="">Select a user</option>
+                {users.map((user) => (
+                    <option key={user.id} value={user.username}>
+                        {user.username}
+                    </option>
+                ))}
+                
+          </select>
         </div>
         {/* Champs cachés pour l'ID du livre et l'ID de l'utilisateur */}
         <input type="hidden" id="livreId" value={livreId ?? ''} />

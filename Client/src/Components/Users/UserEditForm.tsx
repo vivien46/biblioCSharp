@@ -88,8 +88,12 @@ fetchData();
     }
 
     if (loading) {
-        // setLoading(true);
+        setLoading(true);
         return <p>Chargement...</p>;
+    }
+
+    if (error) {
+        return <p>Une erreur s'est produite : {error}</p>;
     }
 
     return (

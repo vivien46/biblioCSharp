@@ -5,7 +5,20 @@ export const usersApi = async () => {
         throw new Error("Impossible de charger les données");
     }
     const data = await res.json();
-    return data;
+
+    if (data.$values && Array.isArray(data.$values)) {
+        const transformedData = data.$values.map((user: any) => ({
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            role: user.role
+        }));
+
+        return transformedData;
+    } else {
+        throw new Error("Les données transformées ne sont pas un tableau");
+    }
+
 }
 
 export const getUserById = async (id: number) => {
@@ -15,7 +28,19 @@ export const getUserById = async (id: number) => {
         throw new Error("Impossible de charger les données");
     }
     const data = await res.json();
-    return data;
+
+    if (data.$values && Array.isArray(data.$values)) {
+        const transformedData = data.$values.map((user: any) => ({
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            role: user.role
+        }));
+
+        return transformedData;
+    } else {
+        throw new Error("Les données transformées ne sont pas un tableau");
+    }
 }
 
 export const updateUser = async (id: number, updatedUser: any) => {

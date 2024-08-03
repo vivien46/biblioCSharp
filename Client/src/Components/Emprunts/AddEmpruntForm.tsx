@@ -86,7 +86,6 @@ const AddEmpruntForm: React.FC = () => {
               if (data && data.$values && Array.isArray(data.$values) && data.$values.length > 0) {
                 setUserId(data.$values.id);
               } else {
-                setError(null);
                 setError('Utilisateur non trouvé');
                 setUserId(null);
               }
@@ -104,21 +103,26 @@ const AddEmpruntForm: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const emprunt = {
-            dateEmprunt,
-            dateRetour,
-            livreId,
-            userId
-        };
+        if (livreId === null || userId === null) {
+            setError('Veuillez sélectionner un livre et un utilisateur');
+            return;
+        }
 
+        const dateEmpruntUTC = new Date(dateEmprunt).toISOString();
+        const dateRetourUTC = new Date(dateRetour).toISOString();
+
+        const formData = new FormData();
+        formData.append('DateEmprunt', dateEmpruntUTC);
+        formData.append('DateRetour', dateRetourUTC);
+        formData.append('LivreTitre', livreTitre);
+        formData.append('Username', username);
+        
         try {
-            const response = await fetch('https://localhost:7153/api/emprunt/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(emprunt)
-            });
+          const response = await fetch('https://localhost:7153/api/emprunt/add', {
+            method: 'POST',
+            body: formData,
+          });
+          console.log(response);
 
           if(!response.ok) {
             throw new Error('Erreur lors de la création de l\'emprunt');
@@ -170,10 +174,10 @@ const AddEmpruntForm: React.FC = () => {
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="livreTitle" className="block text-sm font-medium text-gray-700">Titre du Livre</label>
+          <label htmlFor="livreTitre" className="block text-sm font-medium text-gray-700">Titre du Livre</label>
           <select
-                        id="livreTitle"
-                        name='LivreTitle'
+                        id="livreTitre"
+                        name='LivreTitre'
                         value={livreTitre}
                         onChange={(e) => {
                             setLivreTitre(e.target.value);
@@ -195,6 +199,7 @@ const AddEmpruntForm: React.FC = () => {
           <label htmlFor="username" className="block text-sm font-medium text-gray-700">Nom d'Utilisateur</label>
           <select
                   id='username'
+                  name='Username'
                   value={username}
                   onChange={(e) => {
                     setUsername(e.target.value);
@@ -214,8 +219,8 @@ const AddEmpruntForm: React.FC = () => {
           </select>
         </div>
         {/* Champs cachés pour l'ID du livre et l'ID de l'utilisateur */}
-        <input type="hidden" id="livreId" value={livreId ?? ''} />
-        <input type="hidden" id="userId" value={userId ?? ''} />
+        <input type="hidden" id="livreId" name="LivreId" value={livreId ?? ''} />
+        <input type="hidden" id="userId" name="UserId" value={userId ?? ''} />
         {error && <p className="text-red-500 mb-4">{error}</p>}
         <button
           type="submit"

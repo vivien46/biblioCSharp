@@ -7,31 +7,13 @@ const UserList: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const transformData = (data: any): any[] => {
-    // Vérifie si la réponse contient les métadonnées et extrait les utilisateurs
-    if (data.$values) {
-      return data.$values.map((user: any) => ({
-        id: user.id,
-        username: user.username,
-        email: user.email,
-      }));
-    }
-    return [];
-  };
-
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const data = await usersApi();
-        console.log("Données brutes reçues de l'API :", data);
 
-        const transformedUsers = transformData(data);
-
-        if (Array.isArray(transformedUsers)) {
-          setUsers(transformedUsers);
-        } else {
-          setError("Les données transformées ne sont pas un tableau.");
-        }
+        setUsers(data);
+        
       } catch (error: any) {
         console.error("Erreur lors de la récupération des données :", error);
         setError("Impossible de charger les données");
@@ -59,6 +41,7 @@ const UserList: React.FC = () => {
             <tr>
               <th className="border-2 border-gray-500 text-center p-2">Username</th>
               <th className="border-2 border-gray-500 text-center p-2">Email</th>
+              <th className="border-2 border-gray-500 text-center p-2">Roles</th>
               <th className="border-2 border-gray-500 text-center p-2">Action</th>
             </tr>
           </thead>
@@ -67,6 +50,7 @@ const UserList: React.FC = () => {
               <tr key={user.id} className="border-2 border-gray-500">
                 <td className="border-2 border-gray-500 text-center p-2">{user.username}</td>
                 <td className="border-2 border-gray-500 text-center p-2">{user.email}</td>
+                <td className="border-2 border-gray-500 text-center p-2">{user.role === 1  ? 'Admin' : 'User'}</td>
                 <td className="border-2 border-gray-500 text-center p-2 space-x-2">
                   <Link to={`/api/user/edit/${user.id}`}>
                     <button className="bg-blue-500 p-2 rounded-md">Edit</button>

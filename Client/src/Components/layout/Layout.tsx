@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef} from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../Contexts/AuthContext';
 
@@ -13,11 +13,33 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [isBooksDropdownOpen, setIsBooksDropdownOpen] = useState(false);
   const [isEmpruntDropdownOpen, setIsEmpruntDropdownOpen] = useState(false);
 
+  const usersDropdownRef = useRef<HTMLLIElement>(null);
+  const booksDropdownRef = useRef<HTMLLIElement>(null);
+  const empruntDropdownRef = useRef<HTMLLIElement>(null);
+
   const releaseYear = 2024;
   const currentYear = new Date().getFullYear();
 
   useEffect(() => {
     checkUserLoggedIn();
+
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (usersDropdownRef.current && !usersDropdownRef.current.contains(event.target as Node)) {
+        setIsUsersDropdownOpen(false);
+      }
+      if (booksDropdownRef.current && !booksDropdownRef.current.contains(event.target as Node)) {
+        setIsBooksDropdownOpen(false);
+      }
+      if (empruntDropdownRef.current && !empruntDropdownRef.current.contains(event.target as Node)) {
+        setIsEmpruntDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleOutsideClick);
+
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
   }, [checkUserLoggedIn]);
 
   const toggleUsersDropdown = () => {
@@ -40,7 +62,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <li>
               <Link to="/" className="rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition duration-150">Home</Link>
             </li>
-            <li className="relative">
+            <li className="relative" ref={usersDropdownRef}>
               <button onClick={toggleUsersDropdown} className="py-1 space-x-2 rounded-md text-sm font-medium uppercase text-gray-300 hover:text-white hover:bg-gray-700 transition duration-150 focus:outline-none">
                 Users
               </button>
@@ -55,7 +77,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 </ul>
               )}
             </li>
-            <li className="relative">
+            <li className="relative" ref={booksDropdownRef}>
               <button onClick={toggleBooksDropdown} className="py-1 space-x-2 rounded-md text-sm font-medium uppercase text-gray-300 hover:text-white hover:bg-gray-700 transition duration-150 focus:outline-none">
                 Books
               </button>
@@ -70,7 +92,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 </ul>
               )}
             </li>
-            <li className='relative'>
+            <li className='relative' ref={empruntDropdownRef}>
               <button onClick={toggleEmpruntDropdown} className="py-1 space-x-2 rounded-md text-sm font-medium uppercase text-gray-300 hover:text-white hover:bg-gray-700 transition duration-150 focus:outline-none">
                 Emprunts
               </button>

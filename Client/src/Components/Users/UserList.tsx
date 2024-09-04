@@ -36,7 +36,7 @@ const UserList: React.FC = () => {
   return (
     <div>
       {users.length > 0 ? (
-        <table className="border-collapse border-2 border-gray-500 mt-5 w-full">
+        <table className="border-collapse border-2 border-gray-500 m-5 w-full">
           <thead>
             <tr>
               <th className="border-2 border-gray-500 text-center p-2">Username</th>

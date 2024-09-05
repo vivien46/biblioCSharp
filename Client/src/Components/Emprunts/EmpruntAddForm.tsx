@@ -3,7 +3,7 @@ import { getAllBooks } from '../../Api/books';
 import { usersApi } from '../../Api/users';
 import { useNavigate } from 'react-router-dom';
 
-const AddEmpruntForm: React.FC = () => {
+const EmpruntAddForm: React.FC = () => {
   const [dateEmprunt, setDateEmprunt] = useState<string>('');
   const [dateRetour, setDateRetour] = useState<string>('');
   const [livreTitre, setLivreTitre] = useState<string>('');
@@ -201,4 +201,4 @@ const AddEmpruntForm: React.FC = () => {
   );
 };
 
-export default AddEmpruntForm;
+export default EmpruntAddForm;

@@ -15,8 +15,17 @@ export const getEmpruntById = async (id: number) => {
         throw new Error("Impossible de charger les données");
     }
     const data = await res.json();
-    return data;
-}
+    console.log('Données brutes reçues de l\'API :', data);
+
+    const transformedData = {
+        id: data.id,
+        dateEmprunt: data.dateEmprunt,
+        dateRetour: data.dateRetour,
+        livre: data.livre,
+        user: data.user
+        }
+        return transformedData;
+    };
 
 export const updateEmprunt = async (id: number, updatedEmprunt: any) => {
     const res = await fetch(`https://localhost:7153/api/emprunt/edit/${id}`, {
@@ -37,3 +46,15 @@ export const updateEmprunt = async (id: number, updatedEmprunt: any) => {
 
     return emprunt;
 }
+
+export const deleteEmprunt = async (id: number) => {
+    const res = await fetch(`https://localhost:7153/api/emprunt/${id}`, {
+        method: 'DELETE'
+    });
+
+    if (!res.ok) {
+        throw new Error("Impossible de supprimer l'emprunt");
+    }
+
+    return res;
+};

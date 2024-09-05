@@ -15,7 +15,7 @@ import BooksPage from './Pages/BooksPage';
 import BookAdd from './Components/Books/BookAdd';
 import BookDetail from './Components/Books/BookDetail';
 import BookUpdate from './Components/Books/BookUpdate';
-import AddEmpruntForm from './Components/Emprunts/AddEmpruntForm';
+import AddEmpruntForm from './Components/Emprunts/EmpruntAddForm';
 import EmpruntList from './Components/Emprunts/EmpruntList';
 import './index.css';
 

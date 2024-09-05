@@ -29,6 +29,7 @@ const UserEditForm: React.FC = () => {
                 }
             }catch (error: any) {
                 setError('Impossible de charger les données : ' + error);
+                setLoading(false);
             }
     };
 fetchData();
@@ -36,7 +37,7 @@ fetchData();
 
     const handleChanges = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        console.log(`Field ${name}, value ${value}`);
+        // console.log(`Field ${name}, value ${value}`);
         if (name === 'role') {
             setUser(prevState => ({ ...prevState, role: Number(value) }));
         } else
@@ -55,10 +56,10 @@ fetchData();
             const roleNumber = userWithoutPassword.role.toString() === '0' ? 0 : 1;
             formData.append('role', roleNumber.toString());
 
-        console.log("Données à envoyer :", formData);
-        for(let pair of formData.entries()) {
-            console.log(pair[0] + ', ' + pair[1]);
-        }
+        // console.log("Données à envoyer :", formData);
+        // for(let pair of formData.entries()) {
+        //     console.log(pair[0] + ', ' + pair[1]);
+        // }
 
         const response = await fetch(`https://localhost:7153/api/user/edit/${id}`, {
             method: 'PUT',
@@ -70,8 +71,8 @@ fetchData();
                 throw new Error(`Erreur lors de la mise à jour de l'utilisateur. Statut: ${response.status}, Message: ${errorText}`);
             }
             
-            const data = await response.json();
-            console.log("Utilisateur mis à jour : ", data);
+            // const data = await response.json();
+            // console.log("Utilisateur mis à jour : ", data);
 
             window.alert("L'utilisateur à été mis à jour avec succès");
             navigate(`/api/user/${id}`);
@@ -88,7 +89,6 @@ fetchData();
     }
 
     if (loading) {
-        setLoading(true);
         return <p>Chargement...</p>;
     }
 

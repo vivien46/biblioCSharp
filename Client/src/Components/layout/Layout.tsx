@@ -117,8 +117,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               </li>
             )}
             {isUserLoggedIn ? (
-              <li>
-                <span className='text-red-500 capitalize'>{username} ( {userRole === "Admin" ? (`${userRole}`) : ""} )</span><Link to="/api/user/logout" className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700">Log Out</Link>
+              <li className='text-white'>
+                Bienvenue<span className='text-red-500 capitalize'> {username} ( {userRole === "Admin" ? (`${userRole}`) : ""} )</span><Link to="/api/user/logout" className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700">Log Out</Link>
               </li>
             ) : (
               <li>

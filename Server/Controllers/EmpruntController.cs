@@ -48,10 +48,10 @@ namespace Server.Controllers
         }
 
         [HttpPost("add")]
-public async Task<IActionResult> AddEmprunt([FromForm] string dateEmprunt, [FromForm] string dateRetour, [FromForm] int livreId, [FromForm] int userId)
-{
-    try
-    {
+        public async Task<IActionResult> AddEmprunt([FromForm] string dateEmprunt, [FromForm] string dateRetour, [FromForm] int livreId, [FromForm] int userId)
+        {
+            try
+            {
         // Conversion des dates du format jj/mm/aaaa en DateTime
         DateTime dateEmpruntConverted = DateTime.ParseExact(dateEmprunt, "dd/MM/yyyy", CultureInfo.InvariantCulture);
 
@@ -98,7 +98,7 @@ public async Task<IActionResult> AddEmprunt([FromForm] string dateEmprunt, [From
 }
 
 
-        [HttpPut("{id}")]
+        [HttpPut("edit/{id}")]
         public async Task<ActionResult> UpdateEmprunt(int id, [FromForm] Emprunt emprunt)
         {
             if (id != emprunt.Id)

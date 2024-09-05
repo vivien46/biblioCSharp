@@ -1,58 +1,40 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { booksApi } from "../../Api/books";
+import { getAllBooks } from "../../Api/books";
 
 const BookList: React.FC = () => {
   const [books, setBooks] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const transformData = (data: any): any[] => {
-    // Vérifie si la réponse contient les métadonnées et extrait les livres
-    if (data.$values) {
-      return data.$values.map((book: any) => ({
-        id: book.id,
-        titre: book.titre,
-        auteur: book.auteur,
-        editeur: book.editeur,
-        annee: book.annee,
-        isbn: book.isbn,
-        imageUrl: book.imageUrl,
-      }));
-    }
-    return [];
-  };
 
   useEffect(() => {
-    const fetchBooks = async () => {
-      try {
-        const data = await booksApi();
-        console.log("Données brutes reçues de l'API :", data);
-
-        const transformedBooks = transformData(data);
-
-        if (Array.isArray(transformedBooks)) {
-          setBooks(transformedBooks);
-        } else {
-          setError("Les données transformées ne sont pas un tableau.");
+      const fetchBooks = async () => {
+        try {
+          const data = await getAllBooks();
+          console.log("Données brutes reçues de l'API :", data);
+           if(data) {
+            setBooks(data);
+           } else {
+            setError("Les données transformées ne sont pas un tableau.");
+           }
+        } catch (error: any) {
+          console.error("Erreur lors de la récupération des données :", error);
+          setError("Impossible de charger les données");
+        } finally {
+          setLoading(false);
         }
-      } catch (error: any) {
-        console.error("Erreur lors de la récupération des données :", error);
-        setError("Impossible de charger les données");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchBooks();
-  }, []);
-
-  if (loading) {
-    return <p>Chargement...</p>;
-  }
-
-  if (error) {
-    return <p>{error}</p>;
-  }
+      };
+      fetchBooks();
+    }, []);
+  
+    if (loading) {
+      return <p>Chargement...</p>;
+    }
+  
+    if (error) {
+      return <p>{error}</p>;
+    }
 
   return (
     <div className="flex flex-col justify-center">

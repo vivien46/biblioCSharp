@@ -30,8 +30,7 @@ const EmpruntList: React.FC = () => {
       console.log("Données brutes reçues de l'API :", data);
 
       if (data.$values && Array.isArray(data.$values)) {
-        const transformedData = data.$values.map((emprunt: any) => {
-          // Vérifiez et logguez si 'livre' ou 'user' sont manquants
+        const transformedData = data.$values.map((emprunt: Emprunt) => {
           if (!emprunt.livre) {
             console.warn(`Emprunt avec id ${emprunt.id} n'a pas de livre associé.`);
           }
@@ -47,7 +46,7 @@ const EmpruntList: React.FC = () => {
             userId: emprunt.userId,
             livre: emprunt.livre ? {
               titre: emprunt.livre.titre,
-              imageUrl: emprunt.livre.imageUrl || '', // Assurez-vous que l'image URL est bien présente
+              imageUrl: emprunt.livre.imageUrl || '', 
             } : undefined,
             user: emprunt.user ? {
               username: emprunt.user.username,
@@ -86,20 +85,12 @@ const EmpruntList: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {emprunts.map((emprunt, index ) => {
-              const dateEmprunt = new Date(emprunt.dateEmprunt).toLocaleDateString('fr-FR', {
-                year: 'numeric',
-                month: 'numeric',
-                day: 'numeric',
-              }
-              );
-              const dateRetour = new Date(emprunt.dateRetour).toLocaleDateString('fr-FR', {
-                year: 'numeric',
-                month: 'numeric',
-                day: 'numeric',
-              });
+            {emprunts.map((emprunt) => {
+              const dateEmprunt = new Date(emprunt.dateEmprunt).toLocaleString();
+              const dateRetour = new Date(emprunt.dateRetour).getFullYear();
+
               return (
-                <tr key={index} className="border-b">
+                <tr key={emprunt.id} className="border-b">
                   <td className="py-2 px-4 text-center">{dateEmprunt}</td>
                   <td className="py-2 px-4 text-center">{dateRetour}</td>
                   <td className="py-2 px-4 text-center">
@@ -108,9 +99,9 @@ const EmpruntList: React.FC = () => {
                         <>
                           {emprunt.livre.imageUrl ? (
                             <img
-                            src={`/assets/Images/Livres/${emprunt.livre.imageUrl}`}
-                            alt={emprunt.livre.titre}
-                            className="h-40 w-30 mb-5"
+                              src={`/assets/Images/Livres/${emprunt.livre.imageUrl}`}
+                              alt={emprunt.livre.titre}
+                              className="h-40 w-30 mb-5"
                             />
                           ) : (
                             <p className="text-sm text-gray-500">Pas d'image</p>

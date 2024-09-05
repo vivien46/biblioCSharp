@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 using Server.Models;
 using Server.Database;
 
@@ -47,44 +48,55 @@ namespace Server.Controllers
         }
 
         [HttpPost("add")]
-        public async Task<ActionResult<Emprunt>> CreateEmprunt([FromForm] DateTime DateEmprunt, [FromForm] DateTime DateRetour, [FromForm] string LivreTitre, [FromForm] string Username)
+public async Task<IActionResult> AddEmprunt([FromForm] string dateEmprunt, [FromForm] string dateRetour, [FromForm] int livreId, [FromForm] int userId)
+{
+    try
+    {
+        // Conversion des dates du format jj/mm/aaaa en DateTime
+        DateTime dateEmpruntConverted = DateTime.ParseExact(dateEmprunt, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+        DateTime dateRetourConverted;
+        if (!string.IsNullOrEmpty(dateRetour))
         {
-            DateEmprunt = DateTime.SpecifyKind(DateEmprunt, DateTimeKind.Local).ToUniversalTime();
-            DateRetour = DateTime.SpecifyKind(DateRetour, DateTimeKind.Local).ToUniversalTime();
-
-            var livre = await _context.Livres.FirstOrDefaultAsync(l => l.Titre == LivreTitre);
-            if (livre == null)
-            {
-                return BadRequest("Livre non trouvé.");
-            }
-
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == Username);
-            if (user == null)
-            {
-                return BadRequest("Utilisateur non trouvé.");
-            }
-
-            var emprunt = new Emprunt
-            {
-                DateEmprunt = DateEmprunt,
-                DateRetour = DateRetour,
-                LivreId = livre.Id,
-                UserId = user.Id
-            };
-
-            if (emprunt == null)
-            {
-                return BadRequest("Emprunt non valide.");
-            }
-
-            _context.Emprunts.Add(emprunt);
-            await _context.SaveChangesAsync();
-
-            emprunt.DateEmprunt = emprunt.DateEmprunt.ToLocalTime();
-            emprunt.DateRetour = emprunt.DateRetour.ToLocalTime();
-
-            return CreatedAtAction(nameof(GetEmprunt), new { id = emprunt.Id }, emprunt);
+            dateRetourConverted = DateTime.ParseExact(dateRetour, "dd/MM/yyyy", CultureInfo.InvariantCulture);
         }
+        else
+        {
+            // Si la date de retour n'est pas spécifiée, ajouter 14 jours à la date d'emprunt
+            dateRetourConverted = dateEmpruntConverted.AddDays(14);
+        }
+
+        // Forcer les dates en UTC
+        dateEmpruntConverted = DateTime.SpecifyKind(dateEmpruntConverted, DateTimeKind.Utc);
+        dateRetourConverted = DateTime.SpecifyKind(dateRetourConverted, DateTimeKind.Utc);
+
+        // Création de l'emprunt
+        Emprunt emprunt = new Emprunt
+        {
+            DateEmprunt = dateEmpruntConverted,
+            DateRetour = dateRetourConverted,
+            LivreId = livreId,
+            UserId = userId
+        };
+
+        // Sauvegarde dans la base de données
+        _context.Emprunts.Add(emprunt);
+        await _context.SaveChangesAsync();
+
+        var empruntCreated = await _context.Emprunts
+            .Include(e => e.User)
+            .Include(e => e.Livre)
+            .FirstOrDefaultAsync(e => e.Id == emprunt.Id);
+
+        // Retourner une réponse avec l'emprunt créé
+        return CreatedAtAction("GetEmprunt", new { id = emprunt.Id }, emprunt);
+    }
+    catch (Exception ex)
+    {
+        return BadRequest(new { error = ex.Message });
+    }
+}
+
 
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateEmprunt(int id, [FromForm] Emprunt emprunt)

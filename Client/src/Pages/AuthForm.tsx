@@ -79,10 +79,22 @@ const AuthForm: React.FC = () => {
     
     return (
         <div className="bg-gray-200 p-4">
-            {isUserLoggedIn ? (
-                <h1 className="text-2xl font-bold mb-4 text-center">
-                    Vous êtes déjà connecté avec l'utilisateur {username}
-                </h1>
+             {isUserLoggedIn ? (
+                <>
+                    <h1 className="text-2xl font-bold mb-4 text-center">
+                        Vous êtes déjà connecté avec l'utilisateur {username}
+                    </h1>
+                    {role && (
+                        <h2 className="text-xl text-center">
+                            Vous êtes connecté en tant que {role}
+                        </h2>
+                    )}
+                    {role === 'Admin' && (
+                        <button className="bg-green-500 text-white p-2 rounded mt-4">
+                            Accéder au panneau d'administration
+                        </button>
+                    )}
+                </>
             ) : (
                 <>
                     <h1 className="text-2xl font-bold mb-4 text-center">Authentication Form</h1>

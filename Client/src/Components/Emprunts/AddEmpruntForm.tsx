@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { getAllBooks } from '../../Api/books';
+import { usersApi } from '../../Api/users';
 import { useNavigate } from 'react-router-dom';
 
 const AddEmpruntForm: React.FC = () => {
@@ -14,43 +16,27 @@ const AddEmpruntForm: React.FC = () => {
 
   const navigate = useNavigate();
 
-  const fetchLivres = async () => {
-    try {
-      const response = await fetch('https://localhost:7153/api/book');
-      if (!response.ok) {
-        throw new Error('Erreur de récupération des livres');
-      }
-      const data = await response.json();
-      if (data && data.$values) {
-        setLivres(data.$values);
-      } else {
-        throw new Error('Format de réponses API inattendu');
-      }
-    } catch (error) {
-      console.error('Erreur lors de la récupération des livres', error);
-      setError('Erreur lors de la récupération des livres');
-    }
-  };
-
-  const fetchUsers = async () => {
-    try {
-      const response = await fetch('https://localhost:7153/api/user');
-      if (!response.ok) {
-        throw new Error('Erreur de récupération des utilisateurs');
-      }
-      const data = await response.json();
-      if (data && data.$values) {
-        setUsers(data.$values);
-      } else {
-        throw new Error('Format de réponses API inattendu');
-      }
-    } catch (error) {
-      console.error('Erreur lors de la récupération des utilisateurs', error);
-      setError('Erreur lors de la récupération des utilisateurs');
-    }
-  };
+  
 
   useEffect(() => {
+    const fetchLivres = async () => {
+      try {
+        const livresData = await getAllBooks();
+        setLivres(livresData);
+      } catch (error) {
+        setError('Erreur lors de la récupération des livres');
+      }
+    };
+
+    const fetchUsers = async () => {
+      try {
+        const userData = await usersApi();
+        setUsers(userData);
+      } catch (error) {
+        setError('Erreur lors de la récupération des utilisateurs');
+      }
+    };
+
     fetchLivres();
     fetchUsers();
   }, []);

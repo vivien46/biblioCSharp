@@ -86,8 +86,8 @@ const EmpruntList: React.FC = () => {
           </thead>
           <tbody>
             {emprunts.map((emprunt) => {
-              const dateEmprunt = new Date(emprunt.dateEmprunt).toLocaleString();
-              const dateRetour = new Date(emprunt.dateRetour).getFullYear();
+              const dateEmprunt = new Date(emprunt.dateEmprunt).toLocaleDateString();
+              const dateRetour = new Date(emprunt.dateRetour).toLocaleDateString();
 
               return (
                 <tr key={emprunt.id} className="border-b">

@@ -25,3 +25,4 @@ dist-ssr
 *.sw?
 
 public/assets/Images/Livres/*
+!public/assets/Images/Livres/.gitkeep

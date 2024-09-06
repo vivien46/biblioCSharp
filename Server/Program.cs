@@ -55,9 +55,11 @@ builder.Services.AddSession(options =>
 // Ajouter la configuration CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAny", policy =>
+    options.AddPolicy("VercelSpecificOrigin", policy =>
     {
-        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+        policy.WithOrigins("https://mokarube46-biblio.vercel.app")
+               .AllowAnyHeader()
+               .AllowAnyMethod();
     });
 });
 
@@ -81,7 +83,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("AllowAny");
+app.UseCors("VercelSpecificOrigin");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();

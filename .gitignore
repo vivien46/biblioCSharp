@@ -1,41 +1,43 @@
-# Fichiers de configuration
+# === 🔧 CONFIGURATION & SECRETS ===
 appsettings.json
 appsettings.Development.json
+.env
 
-# Dossiers de dépendances
+# === 📦 DÉPENDANCES NODE / NPM ===
 node_modules/
 packages/
+dist/
+dist-ssr/
+*.local
 
-# Fichiers de build
+# === 🧪 CACHES, LOGS & FICHIERS TEMPORAIRES ===
+*.log
+*.bak
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# === 🧠 VISUAL STUDIO / RIDER / VSCODE ===
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userprefs
+*.sw?
+*.njsproj
+*.sln
+*.sln.docstates
+*.ntvs*
+
+# === ⚙️ BUILD .NET / C# ===
 **/bin/
 **/obj/
 **/Migrations/
 
-# Fichiers de sauvegarde
-*.bak
-*.log
-
-# Fichiers de cache
-.vs/
-.vscode/
-npm-debug.log
-yarn-error.log
-
-# Fichiers de solution Visual Studio
-*.sln
-*.suo
-*.user
-*.userprefs
-*.vspscc
-*.vssscc
-*.psess
-*.vsp
-*.vspx
-*.vsixmanifest
-*.vsix
-*.sln.docstates
-
-# Fichiers de projet Visual Studio
+# === 🗃️ FICHIERS DE BUILD .NET ===
 *.csproj
 *.resx
 *.settings
@@ -43,12 +45,8 @@ yarn-error.log
 *.dll
 *.exe
 *.pdb
-*.userprefs
-*.bak
-*.cache
 *.tmp
 *.tmp_proj
-*.log
 *.vspscc
 *.vssscc
 *.psess
@@ -56,7 +54,7 @@ yarn-error.log
 *.vspx
 *.vsixmanifest
 *.vsix
-*.sln.docstates
 
-# Dossier properties dans Server
-Server/properties/
+# === 📁 IMAGES LOCALES NON VERSIONNÉES ===
+Client/public/assets/Images/Livres/*
+!Client/public/assets/Images/Livres/.gitkeep

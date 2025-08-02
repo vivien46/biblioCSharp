@@ -92,7 +92,7 @@ const EmpruntList: React.FC = () => {
       {error ? (
         <p className="text-red-500">{error}</p>
       ) : (
-        <table className="min-w-full border border-gray-300">
+        <table className="min-w-full border border-gray-300 xs:max-sm">
           <thead>
             <tr className="bg-gray-100">
               <th className="py-2 px-4 border-b">Date d'emprunt</th>
@@ -119,7 +119,7 @@ const EmpruntList: React.FC = () => {
                       <img
                         src={`/assets/Images/Livres/${emprunt.livre.imageUrl}`}
                         alt={emprunt.livre.titre}
-                        className="h-40 w-30 mb-5"
+                        className="h-40 w-30 mt-3 mb-5"
                       />
                       ) : (
                       <p className="text-sm text-gray-500">Pas d'image</p>

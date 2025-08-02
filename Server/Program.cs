@@ -5,28 +5,30 @@ using Server.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
 // Utiliser la chaîne de connexion fournie directement
-var databaseUrl = "postgresql://bibliocsharp_owner:lmJnwOY2T9UN@ep-ancient-grass-a25nwoyo.eu-central-1.aws.neon.tech/bibliocsharp?sslmode=require";
+// var databaseUrl = "postgresql://bibliocsharp_owner:lmJnwOY2T9UN@ep-ancient-grass-a25nwoyo.eu-central-1.aws.neon.tech/bibliocsharp?sslmode=require";
 
-// Convertir la chaîne en Uri pour extraire les informations nécessaires
-var databaseUri = new Uri(databaseUrl);
-var userInfo = databaseUri.UserInfo.Split(':');
+// // Convertir la chaîne en Uri pour extraire les informations nécessaires
+// var databaseUri = new Uri(databaseUrl);
+// var userInfo = databaseUri.UserInfo.Split(':');
 
-// Créer une chaîne de connexion compatible avec Npgsql
-var connectionStringBuilder = new NpgsqlConnectionStringBuilder
-{
-    Host = databaseUri.Host,
-    Port = databaseUri.IsDefaultPort ? 5432 : databaseUri.Port,
-    Username = userInfo[0],
-    Password = userInfo[1],
-    Database = databaseUri.LocalPath.TrimStart('/'),
-    SslMode = SslMode.Require,  // SslMode est requis pour Neon
-};
+// // Créer une chaîne de connexion compatible avec Npgsql
+// var connectionStringBuilder = new NpgsqlConnectionStringBuilder
+// {
+//     Host = databaseUri.Host,
+//     Port = databaseUri.IsDefaultPort ? 5432 : databaseUri.Port,
+//     Username = userInfo[0],
+//     Password = userInfo[1],
+//     Database = databaseUri.LocalPath.TrimStart('/'),
+//     SslMode = SslMode.Require,  // SslMode est requis pour Neon
+// };
 
 // Ajouter cette chaîne de connexion dans Entity Framework
 builder.Services.AddDbContext<DataContext>(options =>
 {
-    options.UseNpgsql(connectionStringBuilder.ConnectionString);
+    options.UseNpgsql(connectionString);
 });
 
 // Autres configurations
@@ -55,21 +57,11 @@ builder.Services.AddSession(options =>
 // Ajouter la configuration CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("VercelSpecificOrigin", policy =>
+    options.AddPolicy("AllowAll", policy =>
     {
-        policy.WithOrigins("https://mokarube46-biblio.vercel.app")
-               .AllowAnyHeader()
-               .AllowAnyMethod();
-    });
-});
-
-// Configurer Kestrel pour l'écoute HTTP et HTTPS
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.ListenAnyIP(5263); // HTTP
-    options.ListenAnyIP(7153, listenOptions =>
-    {
-        listenOptions.UseHttps(); // Utiliser le certificat de développement
+        policy.AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader();
     });
 });
 
@@ -83,7 +75,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("VercelSpecificOrigin");
+app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();

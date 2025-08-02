@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useAuth } from "../Contexts/AuthContext";
+import { Link } from "react-router-dom";
 
 const HomePage: React.FC = () => {
    const {isUserLoggedIn, username, checkUserLoggedIn } = useAuth();
@@ -20,8 +21,8 @@ const HomePage: React.FC = () => {
                 <p className='text-center text-lg'>Bienvenue {username} !</p>
             ) : (
                 <div className='text-center'>
-                    <p className='text-lg'>Pour commencer, veuillez cliquer sur <a href='/api/user/register' className='text-blue-500 hover:underline'>Register</a></p>
-                    <p className='text-lg'>Si vous avez déjà un compte, veuillez cliquer sur <a href='/api/user/login' className='text-blue-500 hover:underline'>Log In</a></p>
+                    <p className='text-lg'>Pour commencer, veuillez cliquer sur <Link to='/api/user/register' className='text-blue-500 hover:underline'>Register</Link></p>
+                    <p className='text-lg'>Si vous avez déjà un compte, veuillez cliquer sur <Link to='/api/user/login' className='text-blue-500 hover:underline'>Log In</Link></p>
                 </div>
             )}
             

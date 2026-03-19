@@ -1,5 +1,5 @@
 export const usersApi = async () => {
-    const res = await fetch("https://localhost:7153/api/user");
+    const res = await fetch("http://localhost:7153/api/user");
 
     if (!res.ok) {
         throw new Error("Impossible de charger les données");
@@ -22,7 +22,7 @@ export const usersApi = async () => {
 }
 
 export const getUserById = async (id: number) => {
-    const res = await fetch(`https://localhost:7153/api/user/${id}`);
+    const res = await fetch(`http://localhost:5263/api/user/${id}`);
 
     if (!res.ok) {
         throw new Error("Impossible de charger les données");

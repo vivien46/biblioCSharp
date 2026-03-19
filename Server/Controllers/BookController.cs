@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Server.Models;
 using Server.Database;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 
 namespace Server.Controllers
 {
@@ -10,13 +12,18 @@ namespace Server.Controllers
     public class BookController : ControllerBase
     {
         private readonly DataContext _context;
-        private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly Cloudinary _cloudinary;
 
-        public BookController(DataContext context, IWebHostEnvironment hostEnvironment)
+        public BookController(DataContext context, IConfiguration configuration)
         {
             _context = context;
-            _hostingEnvironment = hostEnvironment;
 
+            var account = new Account(
+                configuration["Cloudinary:CloudName"],
+                configuration["Cloudinary:ApiKey"],
+                configuration["Cloudinary:ApiSecret"]
+            );
+            _cloudinary = new Cloudinary(account);
         }
 
         [HttpPost("add")]
@@ -25,37 +32,30 @@ namespace Server.Controllers
             if (imageFile == null || imageFile.Length == 0)
                 return BadRequest("Image is missing");
 
-            // Assume que le chemin relatif vers le dossier Client est correctement défini dans le front-end
-            var fileName = Path.GetFileName(imageFile.FileName);
-
-            // Stockez uniquement le nom du fichier dans la base de données
-            livre.ImageUrl = fileName;
-
-            // Enregistrez le fichier dans le dossier du client
-            var clientPath = Path.Combine(AppContext.BaseDirectory, "..\\..\\..\\..\\Client\\public\\assets\\Images\\Livres");
-
-            if (!Directory.Exists(clientPath))
-                Directory.CreateDirectory(clientPath);
-
-            var fullPath = Path.Combine(clientPath, fileName);
-
-            using (var stream = new FileStream(fullPath, FileMode.Create))
+            using var stream = imageFile.OpenReadStream();
+            var uploadParams = new ImageUploadParams
             {
-                await imageFile.CopyToAsync(stream);
-            }
+                File = new FileDescription(imageFile.FileName, stream),
+                Folder = "bibliocsharp/livres"
+            };
 
-            // Ajoutez le livre à la base de données
+            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+
+            if (uploadResult.Error != null)
+                return StatusCode(500, uploadResult.Error.Message);
+
+            livre.ImageUrl = uploadResult.SecureUrl.ToString();
+
             _context.Livres.Add(livre);
             await _context.SaveChangesAsync();
 
             return Ok(livre);
         }
 
-
         [HttpGet()]
         public async Task<IActionResult> GetLivres()
         {
-            List<Livre> livres = await _context.Livres.OrderBy(Livre => Livre.Id).ToListAsync();
+            List<Livre> livres = await _context.Livres.OrderBy(l => l.Id).ToListAsync();
             return Ok(livres);
         }
 
@@ -64,24 +64,9 @@ namespace Server.Controllers
         {
             var livre = await _context.Livres.FindAsync(id);
             if (livre == null)
-            {
                 return NotFound("Livre non trouvé");
-            }
 
             return Ok(livre);
-        }
-
-        [HttpGet("image/{fileName}")]
-        public IActionResult GetImage(string fileName)
-        {
-            var imagePath = Path.Combine(_hostingEnvironment.WebRootPath, "assets/Images/Livres", fileName);
-            if (!System.IO.File.Exists(imagePath))
-            {
-                return NotFound("Image non trouvée");
-            }
-
-            var image = System.IO.File.OpenRead(imagePath);
-            return File(image, "image/jpeg");
         }
 
         [HttpGet("previous/{id}")]
@@ -89,15 +74,15 @@ namespace Server.Controllers
         {
             var currentBook = await _context.Livres.FindAsync(id);
             if (currentBook == null)
-            {
                 return NotFound("Livre actuel non trouvé");
-            }
 
-            var livre = await _context.Livres.Where(l => l.Id < id).OrderByDescending(l => l.Id).FirstOrDefaultAsync();
+            var livre = await _context.Livres
+                .Where(l => l.Id < id)
+                .OrderByDescending(l => l.Id)
+                .FirstOrDefaultAsync();
+
             if (livre == null)
-            {
                 return NotFound("Livre précédent non trouvé");
-            }
 
             return Ok(livre);
         }
@@ -107,20 +92,18 @@ namespace Server.Controllers
         {
             var currentBook = await _context.Livres.FindAsync(id);
             if (currentBook == null)
-            {
                 return NotFound("Livre actuel non trouvé");
-            }
 
-            var livre = await _context.Livres.Where(l => l.Id > id).OrderBy(l => l.Id).FirstOrDefaultAsync();
+            var livre = await _context.Livres
+                .Where(l => l.Id > id)
+                .OrderBy(l => l.Id)
+                .FirstOrDefaultAsync();
+
             if (livre == null)
-            {
                 return NotFound("Livre suivant non trouvé");
-            }
 
             return Ok(livre);
         }
-
-
 
         [HttpPut("edit/{id}")]
         public async Task<IActionResult> Update(int id, [FromForm] string titre, [FromForm] string auteur, [FromForm] string editeur, [FromForm] int annee, [FromForm] string isbn, [FromForm] IFormFile? image)
@@ -128,36 +111,24 @@ namespace Server.Controllers
             try
             {
                 var bookToUpdate = await _context.Livres.FindAsync(id);
-
                 if (bookToUpdate == null)
-                {
                     return NotFound("Livre non trouvé");
-                }
 
                 if (image != null && image.Length > 0)
                 {
-                    var projectDirectory = Path.GetFullPath("..\\Client\\public");
-                    Console.WriteLine($"projectDirectory: {projectDirectory}");
-
-                    var imagePath = Path.Combine(projectDirectory, "assets\\Images\\Livres");
-                    Console.WriteLine($"imagePath: {imagePath}");
-
-                    if (!Directory.Exists(imagePath))
-                        Directory.CreateDirectory(imagePath);
-
-                    var fileName = Path.GetFileName(image.FileName);
-                    var fullPath = Path.Combine(imagePath, fileName);
-
-                    Console.WriteLine($"Tentative d'enregistrement de l'image à : {fullPath}");
-
-                    using (var stream = new FileStream(fullPath, FileMode.Create))
+                    using var stream = image.OpenReadStream();
+                    var uploadParams = new ImageUploadParams
                     {
-                        await image.CopyToAsync(stream);
-                    }
+                        File = new FileDescription(image.FileName, stream),
+                        Folder = "bibliocsharp/livres"
+                    };
 
-                    Console.WriteLine($"Image enregistrée à : {fullPath}");
+                    var uploadResult = await _cloudinary.UploadAsync(uploadParams);
 
-                    bookToUpdate.ImageUrl = $"{fileName}";
+                    if (uploadResult.Error != null)
+                        return StatusCode(500, uploadResult.Error.Message);
+
+                    bookToUpdate.ImageUrl = uploadResult.SecureUrl.ToString();
                 }
 
                 bookToUpdate.Titre = titre;
@@ -167,7 +138,6 @@ namespace Server.Controllers
                 bookToUpdate.ISBN = isbn;
 
                 await _context.SaveChangesAsync();
-
                 return Ok(bookToUpdate);
             }
             catch (Exception ex)
@@ -177,19 +147,15 @@ namespace Server.Controllers
             }
         }
 
-
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var book = await _context.Livres.FindAsync(id);
             if (book == null)
-            {
                 return NotFound("Livre à supprimer non trouvé");
-            }
 
             _context.Livres.Remove(book);
             await _context.SaveChangesAsync();
-
             return Ok(book);
         }
     }

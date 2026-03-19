@@ -1,51 +1,25 @@
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
-using Server.Models;
 using Server.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Connexion DB - valeur dans les variables d'environnement Azure en prod
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Utiliser la chaîne de connexion fournie directement
-// var databaseUrl = "postgresql://bibliocsharp_owner:lmJnwOY2T9UN@ep-ancient-grass-a25nwoyo.eu-central-1.aws.neon.tech/bibliocsharp?sslmode=require";
-
-// // Convertir la chaîne en Uri pour extraire les informations nécessaires
-// var databaseUri = new Uri(databaseUrl);
-// var userInfo = databaseUri.UserInfo.Split(':');
-
-// // Créer une chaîne de connexion compatible avec Npgsql
-// var connectionStringBuilder = new NpgsqlConnectionStringBuilder
-// {
-//     Host = databaseUri.Host,
-//     Port = databaseUri.IsDefaultPort ? 5432 : databaseUri.Port,
-//     Username = userInfo[0],
-//     Password = userInfo[1],
-//     Database = databaseUri.LocalPath.TrimStart('/'),
-//     SslMode = SslMode.Require,  // SslMode est requis pour Neon
-// };
-
-// Ajouter cette chaîne de connexion dans Entity Framework
 builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseNpgsql(connectionString);
 });
 
-// Autres configurations
-var livresImagesPath = Path.Combine(AppContext.BaseDirectory, "..\\Client\\public\\assets\\Images\\Livres");
-var fullImagesPath = Path.GetFullPath(livresImagesPath);
-
-builder.Environment.WebRootPath = Path.GetFullPath("..\\Client\\public");
-
-// Ajouter les services au conteneur
+// Services
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
-    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+    options.JsonSerializerOptions.ReferenceHandler =
+        System.Text.Json.Serialization.ReferenceHandler.Preserve;
 });
 
 builder.Services.AddDistributedMemoryCache();
 
-// Ajouter la gestion des sessions
 builder.Services.AddSession(options =>
 {
     options.Cookie.Name = ".BiblioSession.Session";
@@ -54,20 +28,24 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-// Ajouter la configuration CORS
+// CORS - autorise Vercel + local
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins(
+            "https://mokarube46-biblio.vercel.app",
+            "http://localhost:5173",
+            "http://localhost:3000"
+        )
         .AllowAnyMethod()
-        .AllowAnyHeader();
+        .AllowAnyHeader()
+        .AllowCredentials();
     });
 });
 
 var app = builder.Build();
 
-// Configurer le pipeline des requêtes HTTP
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/error");
@@ -79,6 +57,5 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
-
 app.MapControllers();
 app.Run();

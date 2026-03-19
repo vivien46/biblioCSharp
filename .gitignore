@@ -2,6 +2,8 @@
 appsettings.json
 appsettings.Development.json
 .env
+.env.local
+.env.production
 
 # === 📦 DÉPENDANCES NODE / NPM ===
 node_modules/
@@ -27,33 +29,22 @@ lerna-debug.log*
 *.user
 *.userprefs
 *.sw?
-*.njsproj
-*.sln
-*.sln.docstates
-*.ntvs*
+*.code-workspace
 
 # === ⚙️ BUILD .NET / C# ===
 **/bin/
 **/obj/
-**/Migrations/
 
-# === 🗃️ FICHIERS DE BUILD .NET ===
-*.csproj
-*.resx
-*.settings
+# === 🗃️ FICHIERS TEMPORAIRES ===
 *.cache
 *.dll
 *.exe
 *.pdb
 *.tmp
-*.tmp_proj
-*.vspscc
-*.vssscc
 *.psess
 *.vsp
 *.vspx
-*.vsixmanifest
-*.vsix
+*.old
 
 # === 📁 IMAGES LOCALES NON VERSIONNÉES ===
 Client/public/assets/Images/Livres/*

@@ -59,6 +59,17 @@ app.UseSession();
 
 app.MapGet("/", () => Results.Ok("API BiblioCSharp OK"));
 app.MapGet("/health", () => Results.Ok("healthy"));
+app.MapGet("/routes", (EndpointDataSource endpointDataSource) =>
+{
+    var routes = endpointDataSource.Endpoints
+        .OfType<RouteEndpoint>()
+        .Select(e => e.RoutePattern.RawText)
+        .Distinct()
+        .OrderBy(r => r)
+        .ToList();
+
+    return Results.Ok(routes);
+});
 
 app.MapControllers();
 app.Run();

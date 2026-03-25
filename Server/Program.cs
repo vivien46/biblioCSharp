@@ -48,7 +48,6 @@ var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/error");
     app.UseHsts();
 }
 
@@ -57,5 +56,9 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
+
+app.MapGet("/", () => Results.Ok("API BiblioCSharp OK"));
+app.MapGet("/health", () => Results.Ok("healthy"));
+
 app.MapControllers();
 app.Run();

@@ -60,7 +60,9 @@ const AuthForm: React.FC = () => {
                 setCountdown(5);
 
             } else {
-                setMessage("Nom d'utilisateur ou mot de passe incorrect");
+                const errorText = await response.text();
+                console.log('Erreur login Backend:', errorText);
+                setMessage(`Erreur ${response.status}: ${errorText}`);
             }
         } catch (error) {
             console.error(error);

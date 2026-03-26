@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import Cookies from 'js-cookie';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const AuthForm: React.FC = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -40,7 +42,7 @@ const AuthForm: React.FC = () => {
     formData.append('password', password);
 
         try {
-            const response = await fetch('https://localhost:7153/api/user/login', {
+            const response = await fetch(`${API_BASE_URL}/User/login`, {
                 method: 'POST',
                 body: formData
             });

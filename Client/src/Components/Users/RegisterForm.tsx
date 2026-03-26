@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const RegisterForm: React.FunctionComponent = () => {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
@@ -14,7 +16,7 @@ const RegisterForm: React.FunctionComponent = () => {
         event.preventDefault();
 
         try {
-            const response = await fetch('https://localhost:7153/api/user/register', {
+            const response = await fetch(`${API_BASE_URL}/User/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

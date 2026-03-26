@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const BookAdd: React.FunctionComponent = () => {
     const [titre, setTitre] = useState("");
     const [auteur, setAuteur] = useState("");
@@ -32,7 +34,7 @@ const BookAdd: React.FunctionComponent = () => {
             console.log(pair[0]+ ', ' + pair[1]); 
         }
         try {
-            const response = await fetch('https://localhost:7153/api/book/add', {
+            const response = await fetch(`${API_BASE_URL}/Book/add`, {
                 method: 'POST',
                 body: formData
             });
@@ -41,7 +43,7 @@ const BookAdd: React.FunctionComponent = () => {
 
             if (response.ok){
                 setMessage('Livre ajouté avec succès ! Vous allez être redirigé...');
-                setTimeout(() => navigate('/api/book/'), 15000);
+                setTimeout(() => navigate('/Book/'), 1500);
             } else {
                 const responseBody = await response.text();
                 console.log(responseBody);

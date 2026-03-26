@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const UserDelete: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -9,10 +11,10 @@ const UserDelete: React.FC = () => {
 
   useEffect(() => {
     // Remplacez ceci par votre propre logique de suppression
-    fetch(`https://localhost:7153/api/user/delete/${id}`, { method: 'DELETE' })
+    fetch(`${API_BASE_URL}/User/delete/${id}`, { method: 'DELETE' })
       .then(() => {
         // Redirigez vers la page des utilisateurs après la suppression
-        navigate('/api/user');
+        navigate('/User');
         setLoading(false);
         setMessage("Utilisateur supprimé avec succès.");
       });

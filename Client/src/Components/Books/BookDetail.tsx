@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 interface BookData {
    titre: string;
    auteur: string;
@@ -19,10 +21,10 @@ const BookDetail: React.FC = () => {
 
     const getPreviousBook = async () => {
         try {
-          const response = await fetch(`https://localhost:7153/api/book/previous/${id}`);
+          const response = await fetch(`${API_BASE_URL}/Book/previous/${id}`);
           if (response.ok) {
             const data = await response.json();
-            navigate(`/api/book/${data.id}`);
+            navigate(`/Book/${data.id}`);
           }
         } catch (error) {
           console.error(error);
@@ -31,10 +33,10 @@ const BookDetail: React.FC = () => {
     
       const getNextBook = async () => {
         try {
-          const response = await fetch(`https://localhost:7153/api/book/next/${id}`);
+          const response = await fetch(`${API_BASE_URL}/Book/next/${id}`);
           if (response.ok) {
             const data = await response.json();
-            navigate(`/api/book/${data.id}`);
+            navigate(`/Book/${data.id}`);
           }
         } catch (error) {
           console.error(error);
@@ -47,7 +49,7 @@ const BookDetail: React.FC = () => {
     };
 
     useEffect(() => {
-        fetch(`https://localhost:7153/api/book/${id}`)
+        fetch(`${API_BASE_URL}/Book/${id}`)
             .then(response => response.json())
             .then(data => setBookData(data))
             .catch(error => console.error(error));
@@ -103,7 +105,7 @@ const BookDetail: React.FC = () => {
       </div>
 
       <div className="flex justify-center mt-6 gap-1">
-          <Link to={`/api/book/edit/${id}`} className="bg-blue-200 m-1 p-1 rounded-md">Modifier</Link>
+          <Link to={`/Book/edit/${id}`} className="bg-blue-200 m-1 p-1 rounded-md">Modifier</Link>
       </div>
 
       </div>

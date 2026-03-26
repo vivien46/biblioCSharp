@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const ChangePasswordForm: React.FC = () => {
     const [oldPassword, setOldPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
@@ -24,7 +26,7 @@ const ChangePasswordForm: React.FC = () => {
         formData.append("newPassword", newPassword);
 
         const response = await fetch(
-            `https://localhost:7153/api/user/change-password/${id}`,
+            `${API_BASE_URL}/User/change-password/${id}`,
             {
                 method: "PUT",
                 body: formData,
@@ -33,7 +35,7 @@ const ChangePasswordForm: React.FC = () => {
 
         if (response.ok) {
             alert("Mot de passe modifié avec succès");
-            navigate(`/api/user/${id}`)
+            navigate(`/User/${id}`)
         } else {
             const errorData = await response.json();
             alert(`Erreur : ${errorData.message}`);

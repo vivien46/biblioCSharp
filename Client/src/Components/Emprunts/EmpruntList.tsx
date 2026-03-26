@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { deleteEmprunt } from '../../Api/emprunts'; // Assure-toi d'avoir cette fonction
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 interface Emprunt {
   id: number;
   dateEmprunt: string;
@@ -24,7 +25,7 @@ const EmpruntList: React.FC = () => {
 
   const fetchEmprunts = async () => {
     try {
-      const response = await fetch('https://localhost:7153/api/emprunt');
+      const response = await fetch(`${API_BASE_URL}/Emprunt`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

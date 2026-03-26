@@ -3,6 +3,8 @@ import { getAllBooks } from '../../Api/books';
 import { usersApi } from '../../Api/users';
 import { useNavigate } from 'react-router-dom';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const EmpruntAddForm: React.FC = () => {
   const [dateEmprunt, setDateEmprunt] = useState<string>('');
   const [dateRetour, setDateRetour] = useState<string>('');
@@ -72,7 +74,7 @@ const EmpruntAddForm: React.FC = () => {
   }
 
     try {
-      const response = await fetch('https://localhost:7153/api/emprunt/add', {
+      const response = await fetch(`${API_BASE_URL}/Emprunt/add`, {
         method: 'POST',
         body: formData,
       });
@@ -92,7 +94,7 @@ const EmpruntAddForm: React.FC = () => {
       setUsername('');
       setUserId(null);
 
-      navigate('/api/emprunt');
+      navigate('/Emprunt');
     } catch (error) {
       console.error('Erreur lors de la création de l\'emprunt', error);
       setError('Erreur lors de la création de l\'emprunt');

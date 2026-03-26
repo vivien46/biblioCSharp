@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getUserById } from '../../Api/users';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 interface UserUpdateData {
     username: string;
     passwordHash?: string;
@@ -61,7 +63,7 @@ fetchData();
         //     console.log(pair[0] + ', ' + pair[1]);
         // }
 
-        const response = await fetch(`https://localhost:7153/api/user/edit/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/User/edit/${id}`, {
             method: 'PUT',
             body: formData
             });
@@ -75,7 +77,7 @@ fetchData();
             // console.log("Utilisateur mis à jour : ", data);
 
             window.alert("L'utilisateur à été mis à jour avec succès");
-            navigate(`/api/user/${id}`);
+            navigate(`/User/${id}`);
 
         }catch(error) {
             if (error instanceof Error) {

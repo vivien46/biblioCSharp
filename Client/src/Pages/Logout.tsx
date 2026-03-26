@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../Contexts/AuthContext';
 import Cookies from 'js-cookie';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const Logout: React.FC = () => {
     const { setIsUserLoggedIn } = useAuth();
     const [showModal, setShowModal] = useState(false);
@@ -12,7 +14,7 @@ const Logout: React.FC = () => {
     const handleLogout = async () => {
         setLoading(true);
         try {
-            const response = await fetch('https://localhost:7153/api/user/logout', {
+            const response = await fetch(`${API_BASE_URL}/User/logout`, {
                 method: 'POST',
             });
 

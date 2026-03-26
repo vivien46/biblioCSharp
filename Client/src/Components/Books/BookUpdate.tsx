@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getBookById } from "../../Api/books";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 interface BookUpdateData {
     titre: string;
     auteur: string;
@@ -72,7 +74,7 @@ const BookUpdate: React.FC = () => {
             }
             console.log("Fichier image :", imageFile);
         
-            const response = await fetch(`https://localhost:7153/api/book/edit/${id}`, {
+            const response = await fetch(`${API_BASE_URL}/Book/edit/${id}`, {
                 method: "PUT",
                 body: formData
             });
@@ -87,7 +89,7 @@ const BookUpdate: React.FC = () => {
 
             window.alert("Le livre a été mis à jour avec succès");
 
-            navigate(`/api/book/${id}`);
+            navigate(`/Book/${id}`);
         } catch (error) {
             if (error instanceof Error) {
                 console.error("Impossible de mettre à jour le livre :", error);

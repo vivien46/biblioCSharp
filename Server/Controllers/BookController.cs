@@ -55,25 +55,8 @@ namespace Server.Controllers
         [HttpGet()]
         public async Task<IActionResult> GetLivres()
         {
-            try
-            {
-                List<Livre> livres = await _context.Livres
-                    .OrderBy(l => l.Id)
-                    .ToListAsync();
-
-                return Ok(livres);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new
-                {
-                    message = ex.Message,
-                    inner = ex.InnerException?.Message,
-                    type = ex.GetType().FullName
-                });
-            }
-            // List<Livre> livres = await _context.Livres.OrderBy(l => l.Id).ToListAsync();
-            // return Ok(livres);
+            List<Livre> livres = await _context.Livres.OrderBy(l => l.Id).ToListAsync();
+            return Ok(livres);
         }
 
         [HttpGet("{id}")]

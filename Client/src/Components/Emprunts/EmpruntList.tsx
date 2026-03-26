@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { deleteEmprunt } from '../../Api/emprunts'; // Assure-toi d'avoir cette fonction
+import { deleteEmprunt } from '../../Api/emprunts';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 interface Emprunt {
   id: number;
   dateEmprunt: string;
@@ -21,65 +22,57 @@ interface Emprunt {
 const EmpruntList: React.FC = () => {
   const [emprunts, setEmprunts] = useState<Emprunt[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate(); // Pour redirection après suppression
+  const navigate = useNavigate();
 
   const fetchEmprunts = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/Emprunt`);
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        setError("Impossible de charger les emprunts.");
+        return;
       }
 
       const data = await response.json();
-      console.log("Données brutes reçues de l'API :", data);
 
       if (data.$values && Array.isArray(data.$values)) {
-        const transformedData = data.$values.map((emprunt: Emprunt) => {
-          if (!emprunt.livre) {
-            console.warn(`Emprunt avec id ${emprunt.id} n'a pas de livre associé.`);
-          }
-          if (!emprunt.user) {
-            console.warn(`Emprunt avec id ${emprunt.id} n'a pas d'utilisateur associé.`);
-          }
-
-          return {
-            id: emprunt.id,
-            dateEmprunt: emprunt.dateEmprunt,
-            dateRetour: emprunt.dateRetour,
-            livreId: emprunt.livreId,
-            userId: emprunt.userId,
-            livre: emprunt.livre ? {
-              titre: emprunt.livre.titre,
-              imageUrl: emprunt.livre.imageUrl || '', 
-            } : undefined,
-            user: emprunt.user ? {
-              username: emprunt.user.username,
-            } : undefined,
-          };
-        });
+        const transformedData = data.$values.map((emprunt: Emprunt) => ({
+          id: emprunt.id,
+          dateEmprunt: emprunt.dateEmprunt,
+          dateRetour: emprunt.dateRetour,
+          livreId: emprunt.livreId,
+          userId: emprunt.userId,
+          livre: emprunt.livre
+            ? {
+                titre: emprunt.livre.titre,
+                imageUrl: emprunt.livre.imageUrl || '',
+              }
+            : undefined,
+          user: emprunt.user
+            ? {
+                username: emprunt.user.username,
+              }
+            : undefined,
+        }));
 
         setEmprunts(transformedData);
       } else {
-        console.error("Les données transformées ne sont pas un tableau.");
-        setError("Les données transformées ne sont pas un tableau.");
+        setError("Format de données invalide.");
       }
-    } catch (error: any) {
-      console.error("Erreur lors de la récupération des données :", error);
+    } catch {
       setError("Erreur lors de la récupération des données.");
     }
   };
 
-  // Gestionnaire de suppression
   const handleDelete = async (id: number) => {
     const confirmDelete = window.confirm("Voulez-vous vraiment supprimer cet emprunt ?");
-    if (confirmDelete) {
-      try {
-        await deleteEmprunt(id); // Appel de la fonction API pour supprimer
-        setEmprunts(emprunts.filter((emprunt) => emprunt.id !== id)); // Mettre à jour la liste localement
-        alert("Emprunt supprimé avec succès");
-      } catch (error) {
-        alert("Erreur lors de la suppression de l'emprunt");
-      }
+    if (!confirmDelete) return;
+
+    try {
+      await deleteEmprunt(id);
+      setEmprunts(emprunts.filter((emprunt) => emprunt.id !== id));
+      alert("Emprunt supprimé avec succès");
+    } catch {
+      alert("Erreur lors de la suppression de l'emprunt");
     }
   };
 
@@ -90,6 +83,7 @@ const EmpruntList: React.FC = () => {
   return (
     <div>
       <h1 className="text-2xl font-bold text-center mb-4">Liste des emprunts</h1>
+
       {error ? (
         <p className="text-red-500">{error}</p>
       ) : (
@@ -108,58 +102,57 @@ const EmpruntList: React.FC = () => {
               const dateEmprunt = new Date(emprunt.dateEmprunt).toLocaleDateString();
               const dateRetour = new Date(emprunt.dateRetour).toLocaleDateString();
 
-                return (
+              return (
                 <tr key={emprunt.id} className="border-b">
                   <td className="py-2 px-4 text-center">{dateEmprunt}</td>
                   <td className="py-2 px-4 text-center">{dateRetour}</td>
                   <td className="py-2 px-4 text-center">
-                  <div className="flex flex-col items-center">
-                    {emprunt.livre ? (
-                    <>
-                      {emprunt.livre.imageUrl ? (
-                      <img
-                        src={emprunt.livre.imageUrl}
-                        alt={emprunt.livre.titre}
-                        className="h-40 w-30 mt-3 mb-5"
-                      />
+                    <div className="flex flex-col items-center">
+                      {emprunt.livre ? (
+                        <>
+                          {emprunt.livre.imageUrl && emprunt.livre.imageUrl.startsWith("http") ? (
+                            <img
+                              src={emprunt.livre.imageUrl}
+                              alt={emprunt.livre.titre}
+                              className="h-40 w-30 mt-3 mb-5"
+                            />
+                          ) : (
+                            <p className="text-sm text-gray-500">Pas d'image</p>
+                          )}
+                          <span className="font-bold mb-1">{emprunt.livre.titre}</span>
+                        </>
                       ) : (
-                      <p className="text-sm text-gray-500">Pas d'image</p>
+                        <p className="text-sm text-gray-500">Pas de livre associé</p>
                       )}
-                      <span className="font-bold mb-1">{emprunt.livre.titre}</span>
-                    </>
-                    ) : (
-                    <p className="text-sm text-gray-500">Pas de livre associé</p>
-                    )}
-                  </div>
+                    </div>
                   </td>
                   <td className="py-2 px-4 text-center font-bold">
-                  {emprunt.user ? emprunt.user.username : 'Utilisateur inconnu'}
+                    {emprunt.user ? emprunt.user.username : 'Utilisateur inconnu'}
                   </td>
                   <td className="py-2 px-4 text-center">
-                  {/* Bouton pour voir les détails */}
-                  <button
-                    onClick={() => navigate(`/Emprunt/${emprunt.id}`)}
-                    className="bg-blue-500 text-white hover:underline mr-4 py-1 px-2 rounded"
-                  >
-                    Voir
-                  </button>
-                  {/* Bouton pour modifier l'emprunt */}
-                  <button
-                    onClick={() => navigate(`/Emprunt/edit/${emprunt.id}`)}
-                    className="bg-green-500 text-white hover:underline m-4 py-1 px-2 rounded"
-                  >
-                    Modifier
-                  </button>
-                  {/* Bouton de suppression */}
-                  <button
-                    onClick={() => handleDelete(emprunt.id)}
-                    className="bg-red-500 text-white hover:underline m-4 py-1 px-2 rounded"
-                  >
-                    Supprimer
-                  </button>
+                    <button
+                      onClick={() => navigate(`/api/emprunt/${emprunt.id}`)}
+                      className="bg-blue-500 text-white hover:underline mr-4 py-1 px-2 rounded"
+                    >
+                      Voir
+                    </button>
+
+                    <button
+                      onClick={() => navigate(`/api/emprunt/edit/${emprunt.id}`)}
+                      className="bg-green-500 text-white hover:underline m-4 py-1 px-2 rounded"
+                    >
+                      Modifier
+                    </button>
+
+                    <button
+                      onClick={() => handleDelete(emprunt.id)}
+                      className="bg-red-500 text-white hover:underline m-4 py-1 px-2 rounded"
+                    >
+                      Supprimer
+                    </button>
                   </td>
                 </tr>
-                );
+              );
             })}
           </tbody>
         </table>

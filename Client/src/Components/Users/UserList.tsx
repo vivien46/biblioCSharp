@@ -11,12 +11,9 @@ const UserList: React.FC = () => {
     const fetchUsers = async () => {
       try {
         const data = await usersApi();
-
         setUsers(data);
-        
-      } catch (error: any) {
-        console.error("Erreur lors de la récupération des données :", error);
-        setError("Impossible de charger les données");
+      } catch {
+        setError("Impossible de charger les données.");
       } finally {
         setLoading(false);
       }
@@ -50,7 +47,9 @@ const UserList: React.FC = () => {
               <tr key={user.id} className="border-2 border-gray-500">
                 <td className="border-2 border-gray-500 text-center p-2">{user.username}</td>
                 <td className="border-2 border-gray-500 text-center p-2">{user.email}</td>
-                <td className="border-2 border-gray-500 text-center p-2">{user.role === 1  ? 'Admin' : 'User'}</td>
+                <td className="border-2 border-gray-500 text-center p-2">
+                  {user.role === 1 ? "Admin" : "User"}
+                </td>
                 <td className="border-2 border-gray-500 text-center p-2 space-x-2">
                   <Link to={`/api/user/edit/${user.id}`}>
                     <button className="bg-blue-500 p-2 rounded-md">Edit</button>
@@ -66,7 +65,6 @@ const UserList: React.FC = () => {
       ) : (
         <div>
           <p>Aucun utilisateur trouvé</p>
-          <p>{error}</p>
         </div>
       )}
     </div>

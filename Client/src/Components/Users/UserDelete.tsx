@@ -14,7 +14,7 @@ const UserDelete: React.FC = () => {
     fetch(`${API_BASE_URL}/User/delete/${id}`, { method: 'DELETE' })
       .then(() => {
         // Redirigez vers la page des utilisateurs après la suppression
-        navigate('/User');
+        navigate('/api/User');
         setLoading(false);
         setMessage("Utilisateur supprimé avec succès.");
       });

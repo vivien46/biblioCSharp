@@ -4,21 +4,23 @@ import { getUserById } from "../../Api/users";
 
 const UserProfile: React.FC = () => {
     const { id } = useParams<{ id: string }>();
-    const [user, setUser] = React.useState<any>({});
+    const [user, setUser] = React.useState<any>(null);
     const [loading, setLoading] = React.useState<boolean>(true);
     const [error, setError] = React.useState<string | null>(null);
 
     React.useEffect(() => {
-        getUserById(Number(id))
-            .then((data: any) => {
+        const fetchUser = async () => {
+            try {
+                const data = await getUserById(Number(id));
                 setUser(data);
+            } catch {
+                setError("Impossible de charger les données.");
+            } finally {
                 setLoading(false);
-            })
-            .catch((error: any) => {
-                console.error("erreur lors de la récupération des données :", error);
-                setError("Impossible de charger les données");
-                setLoading(false);
-            });
+            }
+        };
+
+        fetchUser();
     }, [id]);
 
     if (loading) {
@@ -28,10 +30,15 @@ const UserProfile: React.FC = () => {
     if (error) {
         return <p>{error}</p>;
     }
-if (user) {
+
+    if (!user) {
+        return <p>Utilisateur introuvable.</p>;
+    }
+
     return (
         <div>
             <h1 className="font-bold text-xl text-center mb-3">User Profile</h1>
+
             <table className="border-collapse border-2 border-gray-500 mt-5 w-full mb-3">
                 <thead>
                     <tr>
@@ -44,20 +51,22 @@ if (user) {
                     <tr className="border-2 border-gray-500">
                         <td className="border-2 border-gray-500 text-center p-2">{user.username}</td>
                         <td className="border-2 border-gray-500 text-center p-2">{user.email}</td>
-                        <td className="border-2 border-gray-500 text-center p-2">{user.role === 0 ? 'User' : 'Admin'}</td>
+                        <td className="border-2 border-gray-500 text-center p-2">
+                            {user.role === 0 ? "User" : "Admin"}
+                        </td>
                     </tr>
                 </tbody>
             </table>
+
             <div>
                 <Link to={`/api/user/edit/${id}`}>
-                    <button type="button" className="bg-green-500 p-2 rounded-md">Edit User</button>
+                    <button type="button" className="bg-green-500 p-2 rounded-md">
+                        Edit User
+                    </button>
                 </Link>
             </div>
         </div>
     );
-}
-return user;
-
 };
 
 export default UserProfile;

@@ -118,7 +118,7 @@ const EmpruntList: React.FC = () => {
                     <>
                       {emprunt.livre.imageUrl ? (
                       <img
-                        src={`/assets/Images/Livres/${emprunt.livre.imageUrl}`}
+                        src={emprunt.livre.imageUrl}
                         alt={emprunt.livre.titre}
                         className="h-40 w-30 mt-3 mb-5"
                       />
@@ -138,14 +138,14 @@ const EmpruntList: React.FC = () => {
                   <td className="py-2 px-4 text-center">
                   {/* Bouton pour voir les détails */}
                   <button
-                    onClick={() => navigate(`/api/emprunt/${emprunt.id}`)}
+                    onClick={() => navigate(`/Emprunt/${emprunt.id}`)}
                     className="bg-blue-500 text-white hover:underline mr-4 py-1 px-2 rounded"
                   >
                     Voir
                   </button>
                   {/* Bouton pour modifier l'emprunt */}
                   <button
-                    onClick={() => navigate(`/api/emprunt/edit/${emprunt.id}`)}
+                    onClick={() => navigate(`/Emprunt/edit/${emprunt.id}`)}
                     className="bg-green-500 text-white hover:underline m-4 py-1 px-2 rounded"
                   >
                     Modifier

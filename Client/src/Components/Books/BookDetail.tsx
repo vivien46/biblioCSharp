@@ -67,9 +67,9 @@ const BookDetail: React.FC = () => {
       <div className="flex flex-col md:flex-row items-center md:items-center">
         <div className="md:w-1/3 p-4">
         {bookData.imageUrl ? (
-          <a href={`/assets/Images/Livres/${bookData.imageUrl}`} target="_blank" rel="noreferrer">
+          <a href={bookData.imageUrl} target="_blank" rel="noreferrer">
           <img 
-            src={`/assets/Images/Livres/${bookData.imageUrl}`} 
+            src={bookData.imageUrl} 
             alt={bookData.titre} 
             className="w-full h-auto object-cover rounded-lg shadow-md" 
           />

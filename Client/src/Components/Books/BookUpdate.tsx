@@ -158,7 +158,7 @@ const BookUpdate: React.FC = () => {
                     <label className="block text-gray-700">Current Image</label>
                     {book.imageUrl ? (
                         <div>
-                            <img src={`/assets/Images/Livres/${book.imageUrl}`} alt={book.titre} className="mt-1 block w-1/4 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
+                            <img src={book.imageUrl} alt={book.titre} className="mt-1 block w-1/4 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
                             <p className="mt-1">{book.imageUrl}</p>
                         </div>
                     ) : (

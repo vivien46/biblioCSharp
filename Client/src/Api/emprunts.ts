@@ -1,5 +1,8 @@
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export const empruntsApi = async () => {
-    const res = await fetch("https://localhost:7153/api/emprunt");
+    const res = await fetch(`${API_BASE_URL}/Emprunt`);
 
     if (!res.ok) {
         throw new Error("Impossible de charger les données");
@@ -9,7 +12,7 @@ export const empruntsApi = async () => {
 }
 
 export const getEmpruntById = async (id: number) => {
-    const res = await fetch(`https://localhost:7153/api/emprunt/${id}`);
+    const res = await fetch(`${API_BASE_URL}/Emprunt/${id}`);
 
     if (!res.ok) {
         throw new Error("Impossible de charger les données");
@@ -28,7 +31,7 @@ export const getEmpruntById = async (id: number) => {
     };
 
 export const updateEmprunt = async (id: number, updatedEmprunt: any) => {
-    const res = await fetch(`https://localhost:7153/api/emprunt/edit/${id}`, {
+    const res = await fetch(`${API_BASE_URL}/Emprunt/edit/${id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'data/form'
@@ -48,7 +51,7 @@ export const updateEmprunt = async (id: number, updatedEmprunt: any) => {
 }
 
 export const deleteEmprunt = async (id: number) => {
-    const res = await fetch(`https://localhost:7153/api/emprunt/${id}`, {
+    const res = await fetch(`${API_BASE_URL}/Emprunt/${id}`, {
         method: 'DELETE'
     });
 

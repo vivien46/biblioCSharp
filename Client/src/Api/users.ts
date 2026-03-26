@@ -1,5 +1,7 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export const usersApi = async () => {
-    const res = await fetch("http://localhost:7153/api/user");
+    const res = await fetch(`${API_BASE_URL}/User`);
 
     if (!res.ok) {
         throw new Error("Impossible de charger les données");
@@ -22,7 +24,7 @@ export const usersApi = async () => {
 }
 
 export const getUserById = async (id: number) => {
-    const res = await fetch(`http://localhost:5263/api/user/${id}`);
+    const res = await fetch(`${API_BASE_URL}/User/${id}`);
 
     if (!res.ok) {
         throw new Error("Impossible de charger les données");
@@ -42,7 +44,7 @@ export const getUserById = async (id: number) => {
 }
 
 export const updateUser = async (id: number, updatedUser: any) => {
-    const res = await fetch(`https://localhost:7153/api/user/edit/${id}`, {
+    const res = await fetch(`${API_BASE_URL}/User/edit/${id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'data/form'

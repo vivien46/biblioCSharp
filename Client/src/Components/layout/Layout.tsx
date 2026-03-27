@@ -7,7 +7,7 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const { isUserLoggedIn, username, userRole, checkUserLoggedIn } = useAuth();
+  const { isUserLoggedIn, username, userRole, userId, checkUserLoggedIn } = useAuth();
 
   const [isUsersDropdownOpen, setIsUsersDropdownOpen] = useState(false);
   const [isBooksDropdownOpen, setIsBooksDropdownOpen] = useState(false);
@@ -36,108 +36,125 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     };
 
     document.addEventListener('mousedown', handleOutsideClick);
-
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
   }, [checkUserLoggedIn]);
 
-  const toggleUsersDropdown = () => {
-    setIsUsersDropdownOpen(!isUsersDropdownOpen);
-  };
-
-  const toggleBooksDropdown = () => {
-    setIsBooksDropdownOpen(!isBooksDropdownOpen);
-  };
-
-  const toggleEmpruntDropdown = () => {
-    setIsEmpruntDropdownOpen(!isEmpruntDropdownOpen);
-  };
+  const toggleUsersDropdown = () => setIsUsersDropdownOpen(!isUsersDropdownOpen);
+  const toggleBooksDropdown = () => setIsBooksDropdownOpen(!isBooksDropdownOpen);
+  const toggleEmpruntDropdown = () => setIsEmpruntDropdownOpen(!isEmpruntDropdownOpen);
 
   return (
     <div className="font-sans text-black antialiased flex flex-col min-h-screen">
-     <header className="flex items-center justify-between p-6 bg-black border-b border-gray-200">
-  <nav className="flex items-center">
-    <ul className="flex flex-col md:flex-row uppercase space-y-4 md:space-y-0 md:space-x-10">
-      <li>
-        <Link to="/" className="rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition duration-150">Home</Link>
-      </li>
-      <li className="relative" ref={usersDropdownRef}>
-        <button onClick={toggleUsersDropdown} className="py-1 space-x-2 rounded-md text-sm font-medium uppercase text-gray-300 hover:text-white hover:bg-gray-700 transition duration-150 focus:outline-none">
-          Users
-        </button>
-        {isUsersDropdownOpen && (
-          <ul className="absolute mt-1 mr-4 py-2 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+      <header className="flex items-center justify-between p-6 bg-black border-b border-gray-200">
+        <nav className="flex items-center">
+          <ul className="flex flex-col md:flex-row uppercase space-y-4 md:space-y-0 md:space-x-10">
+            
+            {/* Home - toujours visible */}
             <li>
-              <Link to="/api/user" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => setIsUsersDropdownOpen(false)}>Users List</Link>
+              <Link to="/" className="rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition duration-150">Home</Link>
             </li>
-            <li>
-              <Link to="/api/user/register" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => setIsUsersDropdownOpen(false)}>Add Users</Link>
-            </li>
-          </ul>
-        )}
-      </li>
-      <li className="relative" ref={booksDropdownRef}>
-        <button onClick={toggleBooksDropdown} className="py-1 space-x-2 rounded-md text-sm font-medium uppercase text-gray-300 hover:text-white hover:bg-gray-700 transition duration-150 focus:outline-none">
-          Books
-        </button>
-        {isBooksDropdownOpen && (
-          <ul className="absolute mt-1 py-2 bg-white border border-gray-200 rounded-md shadow-lg z-10">
-            <li>
-              <Link to="/api/book" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => setIsBooksDropdownOpen(false)}>Books List</Link>
-            </li>
-            <li>
-              <Link to="/api/book/add" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => setIsBooksDropdownOpen(false)}>Add Books</Link>
-            </li>
-          </ul>
-        )}
-      </li>
-      <li className='relative' ref={empruntDropdownRef}>
-        <button onClick={toggleEmpruntDropdown} className="py-1 space-x-2 rounded-md text-sm font-medium uppercase text-gray-300 hover:text-white hover:bg-gray-700 transition duration-150 focus:outline-none">
-          Emprunts
-        </button>
-        { isEmpruntDropdownOpen && (
-        <ul className="absolute mt-1 py-2 bg-white border border-gray-200 rounded-md shadow-lg z-10">
-          <li>
-            <Link to="/api/emprunt" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Liste des emprunts</Link>
-          </li>
-          <li>
-            <Link to="/api/emprunt/add" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Ajouter un emprunt</Link>
-          </li>
-          </ul>
-          )}
-      </li>
-    </ul>
-  </nav>
 
-  <div className="relative">
-    <ul className="flex flex-col md:flex-row space-y-4 md:space-y-0 px-3-2 py-2 uppercase">
-      {!isUserLoggedIn && (
-        <li>
-          <Link to="/api/user/register" className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700">Register</Link>
-        </li>
-      )}
-      {isUserLoggedIn ? (
-        <li className='text-white'>
-          Bienvenue<span className='text-red-500 capitalize'> {username} ({userRole === "Admin" ? `${userRole}` : ""})</span>
-          <Link to="/api/user/logout" className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700">Log Out</Link>
-        </li>
-      ) : (
-        <li>
-          <Link to="/api/user/login" className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700">Log In</Link>
-        </li>
-      )}
-    </ul>
-  </div>
-</header>
+            {/* Users - admin seulement */}
+            {isUserLoggedIn && userRole === "Admin" && (
+              <li className="relative" ref={usersDropdownRef}>
+                <button onClick={toggleUsersDropdown} className="py-1 space-x-2 rounded-md text-sm font-medium uppercase text-gray-300 hover:text-white hover:bg-gray-700 transition duration-150 focus:outline-none">
+                  Users
+                </button>
+                {isUsersDropdownOpen && (
+                  <ul className="absolute mt-1 mr-4 py-2 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+                    <li>
+                      <Link to="/api/user" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => setIsUsersDropdownOpen(false)}>Users List</Link>
+                    </li>
+                    <li>
+                      <Link to="/api/user/register" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => setIsUsersDropdownOpen(false)}>Add Users</Link>
+                    </li>
+                  </ul>
+                )}
+              </li>
+            )}
 
+            {/* Books - visible si connecté, Add Books admin seulement */}
+            {isUserLoggedIn && (
+              <li className="relative" ref={booksDropdownRef}>
+                <button onClick={toggleBooksDropdown} className="py-1 space-x-2 rounded-md text-sm font-medium uppercase text-gray-300 hover:text-white hover:bg-gray-700 transition duration-150 focus:outline-none">
+                  Books
+                </button>
+                {isBooksDropdownOpen && (
+                  <ul className="absolute mt-1 py-2 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+                    <li>
+                      <Link to="/api/book" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => setIsBooksDropdownOpen(false)}>Books List</Link>
+                    </li>
+                    {userRole === "Admin" && (
+                      <li>
+                        <Link to="/api/book/add" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => setIsBooksDropdownOpen(false)}>Add Books</Link>
+                      </li>
+                    )}
+                  </ul>
+                )}
+              </li>
+            )}
+
+            {/* Emprunts - visible si connecté, Add Emprunt admin seulement */}
+            {isUserLoggedIn && (
+              <li className='relative' ref={empruntDropdownRef}>
+                <button onClick={toggleEmpruntDropdown} className="py-1 space-x-2 rounded-md text-sm font-medium uppercase text-gray-300 hover:text-white hover:bg-gray-700 transition duration-150 focus:outline-none">
+                  Emprunts
+                </button>
+                {isEmpruntDropdownOpen && (
+                  <ul className="absolute mt-1 py-2 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+                    <li>
+                      <Link to="/api/emprunt" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => setIsEmpruntDropdownOpen(false)}>Liste des emprunts</Link>
+                    </li>
+                    {userRole === "Admin" && (
+                      <li>
+                        <Link to="/api/emprunt/add" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => setIsEmpruntDropdownOpen(false)}>Ajouter un emprunt</Link>
+                      </li>
+                    )}
+                  </ul>
+                )}
+              </li>
+            )}
+
+          </ul>
+        </nav>
+
+        {/* Partie droite - login/profil */}
+        <div className="relative">
+          <ul className="flex flex-row items-center space-x-2 uppercase">
+            {!isUserLoggedIn ? (
+              <>
+                <li>
+                  <Link to="/api/user/register" className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700">Register</Link>
+                </li>
+                <li>
+                  <Link to="/api/user/login" className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700">Log In</Link>
+                </li>
+              </>
+            ) : (
+              <>
+                <li className="text-white px-3 py-2 text-sm">
+                  Bienvenue <span className='text-red-500 capitalize'>{username}{userRole === "Admin" ? ` (${userRole})` : ""}</span>
+                </li>
+                <li>
+                  <Link to={`/api/user/${userId}`} className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700">Profil</Link>
+                </li>
+                <li>
+                  <Link to="/api/user/logout" className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700">Log Out</Link>
+                </li>
+              </>
+            )}
+          </ul>
+        </div>
+      </header>
 
       <main className="flex-grow p-6 mb-6">
         {children}
       </main>
 
       <footer className="w-full p-6 bg-black border-t border-gray-200">
-        <p className="text-center text-gray-100 uppercase">© {releaseYear} {currentYear > releaseYear ? ` ${currentYear}` : ''} - BiblioCsharp Compagny - All Right Reserved.</p>
+        <p className="text-center text-gray-100 uppercase">© {releaseYear} - {currentYear > releaseYear ? ` ${currentYear}` : ''} - BiblioCsharp Compagny - All Right Reserved.</p>
       </footer>
     </div>
   );

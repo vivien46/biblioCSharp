@@ -33,6 +33,42 @@ export const getBookById = async (id: number) => {
     return data;
 }
 
+export const getRecentBooks = async (pageNumber: number = 1, pageSize: number = 5) => {
+    const res = await fetch(`${API_BASE_URL}/Book/recent?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    if (!res.ok) {
+        throw new Error("Impossible de charger les livres récents");
+    }
+    const data = await res.json();
+    
+    if (data.books && data.books.$values && Array.isArray(data.books.$values)) {
+        const transformedData = data.books.$values.map((book: any) => ({
+            id: book.id,
+            titre: book.titre,    
+            auteur: book.auteur,    
+            imageUrl: book.imageUrl ? `${API_BASE_URL}/Book/images/${book.imageUrl}` : null,
+            annee: book.annee,  
+            editeur: book.editeur,
+            isbn: book.isbn,
+        }));
+        return {
+            books: transformedData,
+            totalItems: data.totalItems,
+            PageNumber: data.pageNumber,
+            PageSize: data.pageSize,
+            TotalPages: data.totalPages
+        };
+    } else {
+        throw new Error("Les données reçues ne sont pas dans le format attendu");
+    }
+};
+
+export const getStats = async () => {
+    const res = await fetch(`${API_BASE_URL}/Book/stats`);
+    if (!res.ok) {
+        throw new Error("Impossible de charger les statistiques");
+    }
+    return await res.json();
+};
 // export const updateBook = async (id: number, formData : FormData) => {
 
 //     const response = await fetch(`${API_BASE_URL}/Book/edit/${id}`, {

@@ -158,5 +158,40 @@ namespace Server.Controllers
             await _context.SaveChangesAsync();
             return Ok(book);
         }
+
+        [HttpGet("recent")]
+        public async Task<IActionResult> GetRecentBooks(int pageNumber = 1, int pageSize = 8)
+        {
+            var totalItems = await _context.Livres.CountAsync();
+
+            var livres = await _context.Livres
+                .OrderByDescending(l => l.Id)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return Ok(new
+            {
+                books = livres,
+                totalItems,
+                pageNumber,
+                pageSize,
+            });
+        }
+
+        [HttpGet("stats")]
+        public async Task<IActionResult> GetStats()
+        {
+            var totalBooks = await _context.Livres.CountAsync();
+            var totalAuteurs = await _context.Livres.Select(l => l.Auteur).Distinct().CountAsync();
+            var totalEmprunts = await _context.Emprunts.CountAsync();
+            
+            return Ok(new 
+            { 
+                totalBooks,
+                totalAuteurs,
+                totalEmprunts
+            });
+        }
     }
 }

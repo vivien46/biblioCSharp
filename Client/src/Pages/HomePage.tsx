@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import { useAuth } from "../Contexts/AuthContext";
 import { Link } from "react-router-dom";
+import StatsBar from "../Components/Common/StatsBar";
+import BooksRecent from "../Components/Books/BookRecent";
 
 const HomePage: React.FC = () => {
     const { isUserLoggedIn, username, checkUserLoggedIn } = useAuth();
@@ -11,6 +13,7 @@ const HomePage: React.FC = () => {
 
     return (
         <div className="container mx-auto px-4 py-8">
+            {/* 1. Bandeau d'accueil */}
             {isUserLoggedIn ? (
                 <div className="text-center mb-12">
                     <h2 className="text-3xl font-bold text-gray-800">
@@ -22,6 +25,7 @@ const HomePage: React.FC = () => {
                 </div>
             ) : (
                 <div className="text-center mb-12">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-2">Bienvenue sur BiblioCsharp</h1>
                     <p className="text-xl text-gray-700 mb-4">
                         Connectez-vous pour profiter de toutes les fonctionnalités.
                     </p>
@@ -40,6 +44,14 @@ const HomePage: React.FC = () => {
                     </Link>
                 </div>
             )}
+
+            {/* 2. Chiffres clés */}
+            <StatsBar />
+
+            {/* 3. Livres récents */}
+            <section className="mt-12">
+                <BooksRecent />
+            </section>
         </div>
     );
 };

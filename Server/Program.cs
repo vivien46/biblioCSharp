@@ -45,16 +45,20 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddAuthorization();
 
+// Origines autorisées : CORS et contrôle CSRF utilisent la même liste
+var allowedOrigins = new[]
+{
+    "https://mokarube46-biblio.vercel.app",
+    "http://localhost:5173",
+    "http://localhost:3000"
+};
+
 // CORS - autorise Vercel + local
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy.WithOrigins(
-            "https://mokarube46-biblio.vercel.app",
-            "http://localhost:5173",
-            "http://localhost:3000"
-        )
+        policy.WithOrigins(allowedOrigins)
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials();
@@ -70,6 +74,27 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
+
+// Protection CSRF : le cookie d'auth part aussi avec les requêtes cross-site (SameSite=None).
+// Une requête qui modifie des données, authentifiée par cookie, doit venir d'une origine autorisée.
+// Un navigateur envoie toujours l'en-tête Origin sur ce type de requête cross-origin.
+app.Use(async (context, next) =>
+{
+    var method = context.Request.Method;
+    var isSafeMethod = HttpMethods.IsGet(method) || HttpMethods.IsHead(method) || HttpMethods.IsOptions(method);
+    var hasAuthCookie = context.Request.Cookies.ContainsKey(".BiblioAuth");
+    var origin = context.Request.Headers["Origin"].ToString();
+
+    if (!isSafeMethod && hasAuthCookie && origin != "" && !allowedOrigins.Contains(origin))
+    {
+        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+        await context.Response.WriteAsync("Origine non autorisée");
+        return;
+    }
+
+    await next();
+});
+
 app.UseAuthentication();
 app.UseAuthorization();
 

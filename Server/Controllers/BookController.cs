@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Models;
 using Server.Database;
@@ -26,6 +27,7 @@ namespace Server.Controllers
             _cloudinary = new Cloudinary(account);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("add")]
         public async Task<IActionResult> AddLivre([FromForm] Livre livre, [FromForm] IFormFile imageFile)
         {
@@ -105,6 +107,7 @@ namespace Server.Controllers
             return Ok(livre);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("edit/{id}")]
         public async Task<IActionResult> Update(int id, [FromForm] string titre, [FromForm] string auteur, [FromForm] string editeur, [FromForm] int annee, [FromForm] string isbn, [FromForm] IFormFile? image)
         {
@@ -147,6 +150,7 @@ namespace Server.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -162,6 +166,9 @@ namespace Server.Controllers
         [HttpGet("recent")]
         public async Task<IActionResult> GetRecentBooks(int pageNumber = 1, int pageSize = 8)
         {
+            pageNumber = Math.Max(1, pageNumber);
+            pageSize = Math.Clamp(pageSize, 1, 50);
+
             var totalItems = await _context.Livres.CountAsync();
 
             var livres = await _context.Livres

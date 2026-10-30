@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using Server.Models;
@@ -7,6 +8,7 @@ using Server.Database;
 namespace Server.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/[controller]")]
     public class EmpruntController : ControllerBase
     {
@@ -20,19 +22,37 @@ namespace Server.Controllers
 
         }
 
+        // Renvoie l'emprunt sans le hash du mot de passe de l'utilisateur
+        private static object ToDto(Emprunt emprunt) => new
+        {
+            emprunt.Id,
+            emprunt.DateEmprunt,
+            emprunt.DateRetour,
+            emprunt.LivreId,
+            emprunt.UserId,
+            livre = emprunt.Livre,
+            user = emprunt.User == null ? null : new
+            {
+                emprunt.User.Id,
+                emprunt.User.Username,
+                emprunt.User.Email,
+                emprunt.User.Role,
+            },
+        };
+
         [HttpGet]
-        public async Task<ActionResult<List<Emprunt>>> GetEmprunts()
+        public async Task<IActionResult> GetEmprunts()
         {
             var emprunts = await _context.Emprunts
                 .Include(e => e.User)
                 .Include(e => e.Livre)
                 .ToListAsync();
-            return Ok(emprunts);
+            return Ok(emprunts.Select(ToDto));
 
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Emprunt>> GetEmprunt(int id)
+        public async Task<IActionResult> GetEmprunt(int id)
         {
             var emprunt = await _context.Emprunts
                 .Include(e => e.User)
@@ -44,9 +64,10 @@ namespace Server.Controllers
                 return NotFound("Emprunt non trouvé");
             }
 
-            return Ok(emprunt);
+            return Ok(ToDto(emprunt));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("add")]
         public async Task<IActionResult> AddEmprunt([FromForm] string dateEmprunt, [FromForm] string dateRetour, [FromForm] int livreId, [FromForm] int userId)
         {
@@ -98,6 +119,7 @@ namespace Server.Controllers
 }
 
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("edit/{id}")]
         public async Task<ActionResult> UpdateEmprunt(int id, [FromForm] Emprunt emprunt)
         {
@@ -138,6 +160,7 @@ namespace Server.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteEmprunt(int id)
         {

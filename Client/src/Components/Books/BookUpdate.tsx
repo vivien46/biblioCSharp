@@ -1,3 +1,4 @@
+import { apiFetch } from '../../Api/http';
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getBookById } from "../../Api/books";
@@ -76,7 +77,7 @@ const BookUpdate: React.FC = () => {
                 formData.append("image", imageFile);
             }
 
-            const response = await fetch(`${API_BASE_URL}/Book/edit/${id}`, {
+            const response = await apiFetch(`${API_BASE_URL}/Book/edit/${id}`, {
                 method: "PUT",
                 body: formData
             });

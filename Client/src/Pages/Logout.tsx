@@ -1,12 +1,12 @@
+import { apiFetch } from '../Api/http';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../Contexts/AuthContext';
-import Cookies from 'js-cookie';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const Logout: React.FC = () => {
-    const { setIsUserLoggedIn } = useAuth();
+    const { checkUserLoggedIn } = useAuth();
     const [showModal, setShowModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -14,16 +14,13 @@ const Logout: React.FC = () => {
     const handleLogout = async () => {
         setLoading(true);
         try {
-            const response = await fetch(`${API_BASE_URL}/User/logout`, {
+            const response = await apiFetch(`${API_BASE_URL}/User/logout`, {
                 method: 'POST',
             });
 
             if (response.ok) {
-                // Supprimez les cookies
-                Cookies.remove('UserId', { path: '/' });
-                Cookies.remove('Username', { path: '/' });
-                Cookies.remove('UserRole', { path: '/' });
-                setIsUserLoggedIn(false);
+                // Le serveur a supprimé le cookie d'authentification ; on met à jour l'état local
+                await checkUserLoggedIn();
 
                 // Redirigez l'utilisateur vers l'index après la déconnexion
                 navigate('/');

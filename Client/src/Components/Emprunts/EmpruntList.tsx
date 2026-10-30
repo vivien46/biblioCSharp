@@ -1,3 +1,4 @@
+import { apiFetch } from '../../Api/http';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { deleteEmprunt } from '../../Api/emprunts';
@@ -26,7 +27,7 @@ const EmpruntList: React.FC = () => {
 
   const fetchEmprunts = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/Emprunt`);
+      const response = await apiFetch(`${API_BASE_URL}/Emprunt`);
       if (!response.ok) {
         setError("Impossible de charger les emprunts.");
         return;

@@ -1,3 +1,4 @@
+import { apiFetch } from '../../Api/http';
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -25,7 +26,7 @@ const ChangePasswordForm: React.FC = () => {
         formData.append("oldPassword", oldPassword);
         formData.append("newPassword", newPassword);
 
-        const response = await fetch(
+        const response = await apiFetch(
             `${API_BASE_URL}/User/change-password/${id}`,
             {
                 method: "PUT",

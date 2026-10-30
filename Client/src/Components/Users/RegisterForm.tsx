@@ -1,3 +1,4 @@
+import { apiFetch } from '../../Api/http';
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -16,7 +17,7 @@ const RegisterForm: React.FunctionComponent = () => {
         event.preventDefault();
 
         try {
-            const response = await fetch(`${API_BASE_URL}/User/register`, {
+            const response = await apiFetch(`${API_BASE_URL}/User/register`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

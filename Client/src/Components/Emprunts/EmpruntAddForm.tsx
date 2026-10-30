@@ -1,3 +1,4 @@
+import { apiFetch } from '../../Api/http';
 import React, { useEffect, useState } from 'react';
 import { getAllBooks } from '../../Api/books';
 import { usersApi } from '../../Api/users';
@@ -67,7 +68,7 @@ const EmpruntAddForm: React.FC = () => {
     formData.append('UserId', userId.toString());
 
     try {
-      const response = await fetch(`${API_BASE_URL}/Emprunt/add`, {
+      const response = await apiFetch(`${API_BASE_URL}/Emprunt/add`, {
         method: 'POST',
         body: formData,
       });

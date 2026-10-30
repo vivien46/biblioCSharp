@@ -1,3 +1,4 @@
+import { apiFetch } from '../../Api/http';
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 
@@ -21,7 +22,7 @@ const BookDetail: React.FC = () => {
 
   const getPreviousBook = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/Book/previous/${id}`);
+      const response = await apiFetch(`${API_BASE_URL}/Book/previous/${id}`);
       if (!response.ok) return;
 
       const data = await response.json();
@@ -33,7 +34,7 @@ const BookDetail: React.FC = () => {
 
   const getNextBook = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/Book/next/${id}`);
+      const response = await apiFetch(`${API_BASE_URL}/Book/next/${id}`);
       if (!response.ok) return;
 
       const data = await response.json();
@@ -51,7 +52,7 @@ const BookDetail: React.FC = () => {
   useEffect(() => {
     const fetchBook = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/Book/${id}`);
+        const response = await apiFetch(`${API_BASE_URL}/Book/${id}`);
         if (!response.ok) {
           setError("Impossible de charger le livre.");
           return;

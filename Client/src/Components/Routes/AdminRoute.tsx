@@ -7,7 +7,11 @@ interface AdminRouteProps {
 }
 
 const AdminRoute: React.FC<AdminRouteProps> = ({ children }) => {
-  const { isUserLoggedIn, userRole } = useAuth();
+  const { isUserLoggedIn, isAuthLoading, userRole } = useAuth();
+
+  if (isAuthLoading) {
+    return null;
+  }
 
   if (!isUserLoggedIn) {
     return <Navigate to="/api/user/login" replace />;

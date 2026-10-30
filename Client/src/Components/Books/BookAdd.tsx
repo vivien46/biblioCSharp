@@ -1,3 +1,4 @@
+import { apiFetch } from '../../Api/http';
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -31,7 +32,7 @@ const BookAdd: React.FunctionComponent = () => {
         formData.append("Emprunts", empruntsJson);
 
         try {
-            const response = await fetch(`${API_BASE_URL}/Book/add`, {
+            const response = await apiFetch(`${API_BASE_URL}/Book/add`, {
                 method: "POST",
                 body: formData
             });

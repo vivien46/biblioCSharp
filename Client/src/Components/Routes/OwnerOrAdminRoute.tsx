@@ -1,6 +1,5 @@
 import React from "react";
 import { Navigate, useParams } from "react-router-dom";
-import Cookies from "js-cookie";
 import { useAuth } from "../../Contexts/AuthContext";
 
 interface OwnerOrAdminRouteProps {
@@ -8,9 +7,12 @@ interface OwnerOrAdminRouteProps {
 }
 
 const OwnerOrAdminRoute: React.FC<OwnerOrAdminRouteProps> = ({ children }) => {
-  const { isUserLoggedIn, userRole } = useAuth();
+  const { isUserLoggedIn, isAuthLoading, userRole, userId } = useAuth();
   const { id } = useParams<{ id: string }>();
-  const currentUserId = Cookies.get("UserId");
+
+  if (isAuthLoading) {
+    return null;
+  }
 
   if (!isUserLoggedIn) {
     return <Navigate to="/api/user/login" replace />;
@@ -20,7 +22,7 @@ const OwnerOrAdminRoute: React.FC<OwnerOrAdminRouteProps> = ({ children }) => {
     return <>{children}</>;
   }
 
-  if (currentUserId && id && currentUserId === id) {
+  if (userId && id && userId === id) {
     return <>{children}</>;
   }
 

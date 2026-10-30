@@ -1,31 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import Cookies from 'js-cookie';
+import { apiFetch } from '../Api/http';
+import { useAuth } from '../Contexts/AuthContext';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const AuthForm: React.FC = () => {
+    const { isUserLoggedIn, username: loggedInUsername, userRole, checkUserLoggedIn } = useAuth();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [role, setRole] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [message, setMessage] = useState('');
     const [countdown, setCountdown] = useState<number | null>(null);
-    const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
     const navigate = useNavigate();
-
-    useEffect(() => {
-        const userId = Cookies.get('UserId');
-        const usernameCookie = Cookies.get('Username');
-        const userRoleCookie = Cookies.get('Role');
-
-        if (userId && usernameCookie && userRoleCookie) {
-            setIsUserLoggedIn(true);
-            setUsername(usernameCookie);
-            setRole(Number(userRoleCookie) === 0 ? 'Admin' : '');
-        }
-    }, []);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -35,21 +23,14 @@ const AuthForm: React.FC = () => {
         formData.append('password', password);
 
         try {
-            const response = await fetch(`${API_BASE_URL}/User/login`, {
+            const response = await apiFetch(`${API_BASE_URL}/User/login`, {
                 method: 'POST',
                 body: formData
             });
 
             if (response.ok) {
-                const data = await response.json();
-
-                Cookies.set('UserId', data.id.toString(), { path: '/' });
-                Cookies.set('Username', data.username, { path: '/' });
-                Cookies.set('Role', data.role.toString(), { path: '/' });
-
-                setIsUserLoggedIn(true);
-                setUsername(data.username);
-                setRole(data.role === 1 ? 'Admin' : '');
+                // Le cookie d'authentification est posé par le serveur ; on relit l'identité depuis /profile
+                await checkUserLoggedIn();
                 setMessage('Connexion réussie ! Vous serez redirigé...');
                 setCountdown(5);
             } else {
@@ -79,16 +60,16 @@ const AuthForm: React.FC = () => {
             {isUserLoggedIn ? (
                 <>
                     <h1 className="text-2xl font-bold mb-4 text-center">
-                        Vous êtes déjà connecté avec l'utilisateur {username}
+                        Vous êtes déjà connecté avec l'utilisateur {loggedInUsername}
                     </h1>
 
-                    {role && (
+                    {userRole && (
                         <h2 className="text-xl text-center">
-                            Vous êtes connecté en tant que {role}
+                            Vous êtes connecté en tant que {userRole}
                         </h2>
                     )}
 
-                    {role === 'Admin' && (
+                    {userRole === 'Admin' && (
                         <button className="bg-green-500 text-white p-2 rounded mt-4">
                             Accéder au panneau d'administration
                         </button>

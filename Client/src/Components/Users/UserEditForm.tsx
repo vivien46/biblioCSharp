@@ -1,3 +1,4 @@
+import { apiFetch } from '../../Api/http';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getUserById } from '../../Api/users';
@@ -69,7 +70,7 @@ const UserEditForm: React.FC = () => {
             formData.append('email', userWithoutPassword.email);
             formData.append('role', userWithoutPassword.role.toString());
 
-            const response = await fetch(`${API_BASE_URL}/User/edit/${id}`, {
+            const response = await apiFetch(`${API_BASE_URL}/User/edit/${id}`, {
                 method: 'PUT',
                 body: formData
             });

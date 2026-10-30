@@ -1,7 +1,8 @@
+import { apiFetch } from './http';
 ﻿const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const getAllBooks = async () => {
-    const res = await fetch(`${API_BASE_URL}/Book`);
+    const res = await apiFetch(`${API_BASE_URL}/Book`);
     if (!res.ok) {
         throw new Error("Impossible de charger les données");
     }
@@ -24,7 +25,7 @@ export const getAllBooks = async () => {
 }
 
 export const getBookById = async (id: number) => {
-    const res = await fetch(`${API_BASE_URL}/Book/${id}`);
+    const res = await apiFetch(`${API_BASE_URL}/Book/${id}`);
     if (!res.ok) {
         throw new Error("Impossible de charger les données");
     }
@@ -34,7 +35,7 @@ export const getBookById = async (id: number) => {
 }
 
 export const getRecentBooks = async (pageNumber: number = 1, pageSize: number = 5) => {
-    const res = await fetch(`${API_BASE_URL}/Book/recent?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    const res = await apiFetch(`${API_BASE_URL}/Book/recent?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     if (!res.ok) {
         throw new Error("Impossible de charger les livres récents");
     }
@@ -63,7 +64,7 @@ export const getRecentBooks = async (pageNumber: number = 1, pageSize: number = 
 };
 
 export const getStats = async () => {
-    const res = await fetch(`${API_BASE_URL}/Book/stats`);
+    const res = await apiFetch(`${API_BASE_URL}/Book/stats`);
     if (!res.ok) {
         throw new Error("Impossible de charger les statistiques");
     }
@@ -71,7 +72,7 @@ export const getStats = async () => {
 };
 // export const updateBook = async (id: number, formData : FormData) => {
 
-//     const response = await fetch(`${API_BASE_URL}/Book/edit/${id}`, {
+//     const response = await apiFetch(`${API_BASE_URL}/Book/edit/${id}`, {
 //         method: "PUT",
 //         body: formData
 //     });

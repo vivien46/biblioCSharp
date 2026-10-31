@@ -12,6 +12,7 @@ import User from './Components/Users/User';
 import UserEditForm from './Components/Users/UserEditForm';
 import UserDelete from './Components/Users/UserDelete';
 import BooksPage from './Pages/BooksPage';
+import AdminDashboard from './Pages/AdminDashboard';
 import BookAdd from './Components/Books/BookAdd';
 import BookDetail from './Components/Books/BookDetail';
 import BookUpdate from './Components/Books/BookUpdate';
@@ -29,6 +30,15 @@ const App: React.FC = () => {
       <Layout>
         <Routes>
           <Route path='/' element={<HomePage />} />
+
+          <Route
+            path='/admin'
+            element={
+              <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
+            }
+          />
 
           <Route path='/api/user/login' element={<AuthForm />} />
           <Route path='/api/user/register' element={<RegisterForm />} />

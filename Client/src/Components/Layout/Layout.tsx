@@ -56,6 +56,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <Link to="/" className="rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition duration-150">Home</Link>
             </li>
 
+            {/* Tableau de bord - admin seulement */}
+            {isUserLoggedIn && userRole === "Admin" && (
+              <li>
+                <Link to="/admin" className="rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition duration-150">Admin</Link>
+              </li>
+            )}
+
             {/* Users - admin seulement */}
             {isUserLoggedIn && userRole === "Admin" && (
               <li className="relative" ref={usersDropdownRef}>

@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Server.Models
 {
     public class User
@@ -5,6 +7,10 @@ namespace Server.Models
         public int Id { get; set; }
         public string Username { get; set; }
         public string PasswordHash { get; set; }
+
+        // Obligatoire et au bon format : une chaîne vide entrerait en conflit avec l'index unique
+        [Required]
+        [EmailAddress]
         public string Email { get; set; }
         public Role Role { get; set; }
 

@@ -49,25 +49,40 @@ const Logout: React.FC = () => {
     };
 
     return (
-        <div>
-            <h1>Déconnexion</h1>
+        <div className="max-w-md mx-auto my-8 bg-white shadow-md rounded p-6 text-center">
+            <h1 className="text-2xl font-bold mb-4">Déconnexion</h1>
 
             {loading ? (
-                <p>Déconnexion en cours...</p>
+                <p className="text-gray-600">Déconnexion en cours...</p>
             ) : (
-                <div>
-                <button onClick={handleLogoutConfirmation} className='btn bg-red-500'>Se déconnecter</button>
-                </div>
+                <button
+                    onClick={handleLogoutConfirmation}
+                    className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                >
+                    Se déconnecter
+                </button>
             )}
 
             {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>}
 
             {showModal && (
-                <div className="modal">
-                    <div className="modal-content">
-                        <p>Êtes-vous sûr de vouloir vous déconnecter ?</p>
-                        <button onClick={handleLogout}>Oui</button>
-                        <button onClick={handleCancel}>Non</button>
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-white shadow-lg rounded p-6 max-w-sm w-full mx-4 text-center">
+                        <p className="mb-6 text-gray-800">Êtes-vous sûr de vouloir vous déconnecter ?</p>
+                        <div className="flex justify-center gap-4">
+                            <button
+                                onClick={handleLogout}
+                                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                            >
+                                Oui
+                            </button>
+                            <button
+                                onClick={handleCancel}
+                                className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded"
+                            >
+                                Non
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

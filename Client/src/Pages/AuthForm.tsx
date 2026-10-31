@@ -68,7 +68,7 @@ const AuthForm: React.FC = () => {
     }, [countdown, navigate, redirectTo]);
 
     return (
-        <div className="bg-gray-200 p-4">
+        <div className="max-w-md mx-auto my-8 bg-white shadow-md rounded p-6">
             {loginSucceeded ? (
                 <div className="text-green-600 text-center text-lg">{message}</div>
             ) : isUserLoggedIn ? (
@@ -104,7 +104,7 @@ const AuthForm: React.FC = () => {
                                 id="username"
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
-                                className="border border-gray-300 p-2 rounded"
+                                className="w-full border border-gray-300 p-2 rounded"
                                 placeholder="Nom d'utilisateur"
                                 autoComplete="username"
                             />
@@ -117,7 +117,7 @@ const AuthForm: React.FC = () => {
                                 id="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="border border-gray-300 p-2 rounded"
+                                className="w-full border border-gray-300 p-2 rounded"
                                 placeholder="Mot de passe"
                                 autoComplete="current-password"
                             />
@@ -138,7 +138,7 @@ const AuthForm: React.FC = () => {
                                 type="submit"
                                 value={submitting ? "Connexion..." : "Se connecter"}
                                 disabled={submitting}
-                                className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
                             />
                         </div>
 

@@ -101,6 +101,9 @@ namespace Server.Controllers
                 if (email != null && !new EmailAddressAttribute().IsValid(email))
                     return BadRequest("Email invalide");
 
+                if (username != null && string.IsNullOrWhiteSpace(username))
+                    return BadRequest("Le nom d'utilisateur est obligatoire");
+
                 userToUpdate.Username = username ?? userToUpdate.Username;
                 userToUpdate.Email = email ?? userToUpdate.Email;
 

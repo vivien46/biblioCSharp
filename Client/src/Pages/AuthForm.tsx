@@ -17,6 +17,7 @@ const AuthForm: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setMessage('');
 
         const formData = new FormData();
         formData.append('username', username);

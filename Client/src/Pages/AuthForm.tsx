@@ -117,12 +117,12 @@ const AuthForm: React.FC = () => {
                                 id="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full border border-gray-300 p-2 rounded"
+                                className="w-full border border-gray-300 p-2 pr-10 rounded"
                                 placeholder="Mot de passe"
                                 autoComplete="current-password"
                             />
 
-                            <div className="absolute top-2/3 left-44 transform -translate-y-1/2 cursor-pointer">
+                            <div className="absolute right-3 bottom-2 cursor-pointer">
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}

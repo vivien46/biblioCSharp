@@ -25,8 +25,7 @@ const RegisterForm: React.FunctionComponent = () => {
                 body: JSON.stringify({
                     Username: username,
                     Email: email,
-                    PasswordHash: password,
-                    Emprunts: []
+                    Password: password
                 })
             });
 

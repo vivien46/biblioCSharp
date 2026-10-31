@@ -33,14 +33,17 @@ namespace Server.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<IActionResult> Register(User user)
+        public async Task<IActionResult> Register(RegisterRequest request)
         {
-            // Le champ PasswordHash reçoit le mot de passe en clair : on le hache ici
-            user.PasswordHash = PasswordHelper.Hash(user.PasswordHash);
-
-            // Un inscrit ne peut jamais se déclarer admin
-            user.Id = 0;
-            user.Role = Role.User;
+            // Un inscrit ne peut jamais se déclarer admin : le rôle est fixé ici
+            var user = new User
+            {
+                Username = request.Username,
+                Email = request.Email,
+                PasswordHash = PasswordHelper.Hash(request.Password),
+                Role = Role.User,
+                Emprunts = new List<Emprunt>(),
+            };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();

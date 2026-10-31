@@ -61,6 +61,30 @@ namespace Server.Controllers
             return Ok(livres);
         }
 
+        [HttpGet("paged")]
+        public async Task<IActionResult> GetLivresPagines(int pageNumber = 1, int pageSize = 10)
+        {
+            pageNumber = Math.Max(1, pageNumber);
+            pageSize = Math.Clamp(pageSize, 1, 50);
+
+            var totalItems = await _context.Livres.CountAsync();
+
+            var livres = await _context.Livres
+                .OrderBy(l => l.Id)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return Ok(new
+            {
+                books = livres,
+                totalItems,
+                pageNumber,
+                pageSize,
+                totalPages = (int)Math.Ceiling(totalItems / (double)pageSize),
+            });
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetLivre(int id)
         {

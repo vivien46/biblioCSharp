@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getAllBooks } from "../../Api/books";
+import { getBooksPaged } from "../../Api/books";
+import Pagination from "../Common/Pagination";
 
 const BookList: React.FC = () => {
   const [books, setBooks] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [totalItems, setTotalItems] = useState<number>(0);
 
   useEffect(() => {
     const fetchBooks = async () => {
+      setLoading(true);
       try {
-        const data = await getAllBooks();
-
-        if (data) {
-          setBooks(data);
-        } else {
-          setError("Les données récupérées sont invalides.");
-        }
+        const data = await getBooksPaged(page, pageSize);
+        setBooks(data.books);
+        setTotalItems(data.totalItems);
       } catch {
         setError("Impossible de charger les données.");
       } finally {
@@ -25,7 +26,7 @@ const BookList: React.FC = () => {
     };
 
     fetchBooks();
-  }, []);
+  }, [page, pageSize]);
 
   if (loading) {
     return <p>Chargement...</p>;
@@ -98,6 +99,17 @@ const BookList: React.FC = () => {
       ) : (
         <p>Aucun livre trouvé</p>
       )}
+
+      <Pagination
+        totalItems={totalItems}
+        itemsPerPage={pageSize}
+        currentPage={page}
+        onPageChange={setPage}
+        onItemsPerPageChange={(newSize) => {
+          setPageSize(newSize);
+          setPage(1);
+        }}
+      />
     </div>
   );
 };

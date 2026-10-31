@@ -63,6 +63,32 @@ export const getRecentBooks = async (pageNumber: number = 1, pageSize: number = 
     }
 };
 
+export const getBooksPaged = async (pageNumber: number = 1, pageSize: number = 10) => {
+    const res = await apiFetch(`${API_BASE_URL}/Book/paged?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    if (!res.ok) {
+        throw new Error("Impossible de charger les livres");
+    }
+    const data = await res.json();
+
+    if (data.books && data.books.$values && Array.isArray(data.books.$values)) {
+        return {
+            books: data.books.$values.map((book: any) => ({
+                id: book.id,
+                titre: book.titre,
+                auteur: book.auteur,
+                editeur: book.editeur,
+                annee: book.annee,
+                isbn: book.isbn,
+                imageUrl: book.imageUrl,
+            })),
+            totalItems: data.totalItems as number,
+            totalPages: data.totalPages as number,
+        };
+    } else {
+        throw new Error("Les données reçues ne sont pas dans le format attendu");
+    }
+};
+
 export const getStats = async () => {
     const res = await apiFetch(`${API_BASE_URL}/Book/stats`);
     if (!res.ok) {

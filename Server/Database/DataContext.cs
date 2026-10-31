@@ -9,6 +9,7 @@ namespace Server.Database
         public DbSet<User> Users { get; set; }
         public DbSet<Livre> Livres { get; set; }
         public DbSet<Emprunt> Emprunts { get; set; }
+        public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

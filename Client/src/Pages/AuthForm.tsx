@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { apiFetch } from '../Api/http';
 import { useAuth } from '../Contexts/AuthContext';
@@ -143,6 +143,12 @@ const AuthForm: React.FC = () => {
                         </div>
 
                         {message && <div className="text-red-500 mt-4">{message}</div>}
+
+                        <div className="mt-4 text-center">
+                            <Link to="/api/user/forgot-password" className="text-sm text-blue-600 hover:underline">
+                                Mot de passe oublié ?
+                            </Link>
+                        </div>
                     </form>
                 </>
             )}

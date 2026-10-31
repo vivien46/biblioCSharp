@@ -13,6 +13,8 @@ import UserEditForm from './Components/Users/UserEditForm';
 import UserDelete from './Components/Users/UserDelete';
 import BooksPage from './Pages/BooksPage';
 import AdminDashboard from './Pages/AdminDashboard';
+import ForgotPasswordPage from './Pages/ForgotPasswordPage';
+import ResetPasswordPage from './Pages/ResetPasswordPage';
 import BookAdd from './Components/Books/BookAdd';
 import BookDetail from './Components/Books/BookDetail';
 import BookUpdate from './Components/Books/BookUpdate';
@@ -43,6 +45,8 @@ const App: React.FC = () => {
           <Route path='/api/user/login' element={<AuthForm />} />
           <Route path='/api/user/register' element={<RegisterForm />} />
           <Route path='/api/user/logout' element={<Logout />} />
+          <Route path='/api/user/forgot-password' element={<ForgotPasswordPage />} />
+          <Route path='/api/user/reset-password' element={<ResetPasswordPage />} />
 
           <Route
             path='/api/user'

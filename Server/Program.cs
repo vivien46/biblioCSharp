@@ -9,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Connexion DB - valeur dans les variables d'environnement Azure en prod
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
+builder.Services.AddScoped<Server.Services.EmailService>();
+
 builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseNpgsql(connectionString);

@@ -15,10 +15,13 @@ const AuthForm: React.FC = () => {
     const [countdown, setCountdown] = useState<number | null>(null);
     const [loginSucceeded, setLoginSucceeded] = useState(false);
     const [redirectTo, setRedirectTo] = useState('/');
+    const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if (submitting) return;
+        setSubmitting(true);
         setMessage('');
 
         const formData = new FormData();
@@ -45,6 +48,8 @@ const AuthForm: React.FC = () => {
             }
         } catch {
             setMessage("Impossible de se connecter pour le moment.");
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -131,8 +136,9 @@ const AuthForm: React.FC = () => {
                         <div>
                             <input
                                 type="submit"
-                                value="Se connecter"
-                                className="bg-blue-500 text-white px-4 py-2 rounded"
+                                value={submitting ? "Connexion..." : "Se connecter"}
+                                disabled={submitting}
+                                className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
                             />
                         </div>
 

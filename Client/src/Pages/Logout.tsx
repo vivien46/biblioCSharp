@@ -9,10 +9,12 @@ const Logout: React.FC = () => {
     const { checkUserLoggedIn } = useAuth();
     const [showModal, setShowModal] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
 
     const handleLogout = async () => {
         setLoading(true);
+        setErrorMessage('');
         try {
             const response = await apiFetch(`${API_BASE_URL}/User/logout`, {
                 method: 'POST',
@@ -26,9 +28,13 @@ const Logout: React.FC = () => {
                 navigate('/');
             } else {
                 console.error('Failed to logout');
+                setShowModal(false);
+                setErrorMessage("La déconnexion a échoué. Réessayez.");
             }
         } catch (error) {
             console.error('An error occurred while logging out', error);
+            setShowModal(false);
+            setErrorMessage("Impossible de vous déconnecter pour le moment.");
         } finally {
             setLoading(false);
         }
@@ -53,6 +59,8 @@ const Logout: React.FC = () => {
                 <button onClick={handleLogoutConfirmation} className='btn bg-red-500'>Se déconnecter</button>
                 </div>
             )}
+
+            {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>}
 
             {showModal && (
                 <div className="modal">

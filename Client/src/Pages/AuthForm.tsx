@@ -13,6 +13,7 @@ const AuthForm: React.FC = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [message, setMessage] = useState('');
     const [countdown, setCountdown] = useState<number | null>(null);
+    const [loginSucceeded, setLoginSucceeded] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -31,6 +32,7 @@ const AuthForm: React.FC = () => {
 
             if (response.ok) {
                 // Le cookie d'authentification est posé par le serveur ; on relit l'identité depuis /profile
+                setLoginSucceeded(true);
                 await checkUserLoggedIn();
                 setMessage('Connexion réussie ! Vous serez redirigé...');
                 setCountdown(5);
@@ -58,7 +60,9 @@ const AuthForm: React.FC = () => {
 
     return (
         <div className="bg-gray-200 p-4">
-            {isUserLoggedIn ? (
+            {loginSucceeded ? (
+                <div className="text-green-600 text-center text-lg">{message}</div>
+            ) : isUserLoggedIn ? (
                 <>
                     <h1 className="text-2xl font-bold mb-4 text-center">
                         Vous êtes déjà connecté avec l'utilisateur {loggedInUsername}

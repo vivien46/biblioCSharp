@@ -1,10 +1,9 @@
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Models;
 using Server.Database;
+using Server.Security;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
@@ -35,8 +34,8 @@ namespace Server.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(User user)
         {
-            var hashedBytes = SHA512.HashData(Encoding.UTF8.GetBytes(user.PasswordHash));
-            user.PasswordHash = BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
+            // Le champ PasswordHash reçoit le mot de passe en clair : on le hache ici
+            user.PasswordHash = PasswordHelper.Hash(user.PasswordHash);
 
             // Un inscrit ne peut jamais se déclarer admin
             user.Id = 0;
@@ -127,16 +126,12 @@ namespace Server.Controllers
                     return NotFound();
                 }
 
-                var oldHashedBytes = SHA512.HashData(Encoding.UTF8.GetBytes(oldPassword));
-                var oldHashedPassword = BitConverter.ToString(oldHashedBytes).Replace("-", "").ToLower();
-
-                if (oldHashedPassword != userToUpdate.PasswordHash)
+                if (!PasswordHelper.VerifyAndUpgrade(userToUpdate, oldPassword))
                 {
                     return BadRequest("L'ancien mot de passe est incorrect");
                 }
 
-                var newHashedBytes = SHA512.HashData(Encoding.UTF8.GetBytes(newPassword));
-                userToUpdate.PasswordHash = BitConverter.ToString(newHashedBytes).Replace("-", "").ToLower();
+                userToUpdate.PasswordHash = PasswordHelper.Hash(newPassword);
 
                 await _context.SaveChangesAsync();
 

@@ -5,9 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Models;
 using Server.Database;
+using Server.Security;
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace Server.Controllers
 {
@@ -30,11 +29,13 @@ namespace Server.Controllers
             if (user == null)
                 return BadRequest("Invalid username or password");
 
-            var hashedBytes = SHA512.HashData(Encoding.UTF8.GetBytes(password));
-            var hashedPassword = BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
-
-            if (user.PasswordHash != hashedPassword)
+            var previousHash = user.PasswordHash;
+            if (!PasswordHelper.VerifyAndUpgrade(user, password))
                 return BadRequest("Invalid username or password");
+
+            // Conversion d'un ancien hash SHA512 vers le nouveau format
+            if (user.PasswordHash != previousHash)
+                await _context.SaveChangesAsync();
 
             var claims = new List<Claim>
             {

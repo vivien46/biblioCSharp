@@ -75,7 +75,10 @@ const AuthForm: React.FC = () => {
                     )}
 
                     {userRole === 'Admin' && (
-                        <button className="bg-green-500 text-white p-2 rounded mt-4">
+                        <button
+                            onClick={() => navigate('/admin')}
+                            className="bg-green-500 text-white p-2 rounded mt-4"
+                        >
                             Accéder au panneau d'administration
                         </button>
                     )}

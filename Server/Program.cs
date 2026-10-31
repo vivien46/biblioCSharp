@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Server.Database;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +42,33 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         {
             ctx.Response.StatusCode = StatusCodes.Status403Forbidden;
             return Task.CompletedTask;
+        };
+        // À chaque requête : on relit le compte en base. Un compte supprimé est déconnecté,
+        // et un changement de rôle est pris en compte sans attendre la prochaine connexion.
+        options.Events.OnValidatePrincipal = async ctx =>
+        {
+            var db = ctx.HttpContext.RequestServices.GetRequiredService<DataContext>();
+            var userId = ctx.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var user = await db.Users.AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id.ToString() == userId);
+
+            if (user == null)
+            {
+                ctx.RejectPrincipal();
+                await ctx.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                return;
+            }
+
+            var identity = (ClaimsIdentity)ctx.Principal!.Identity!;
+            var roleClaim = identity.FindFirst(ClaimTypes.Role);
+            if (roleClaim?.Value != user.Role.ToString())
+            {
+                if (roleClaim != null)
+                    identity.RemoveClaim(roleClaim);
+                identity.AddClaim(new Claim(ClaimTypes.Role, user.Role.ToString()));
+                ctx.ShouldRenew = true;
+            }
         };
     });
 

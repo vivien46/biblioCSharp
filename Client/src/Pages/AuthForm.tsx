@@ -14,6 +14,7 @@ const AuthForm: React.FC = () => {
     const [message, setMessage] = useState('');
     const [countdown, setCountdown] = useState<number | null>(null);
     const [loginSucceeded, setLoginSucceeded] = useState(false);
+    const [redirectTo, setRedirectTo] = useState('/');
     const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -32,6 +33,9 @@ const AuthForm: React.FC = () => {
 
             if (response.ok) {
                 // Le cookie d'authentification est posé par le serveur ; on relit l'identité depuis /profile
+                // Un admin arrive directement sur le tableau de bord
+                const data = await response.json();
+                setRedirectTo(Number(data.role) === 1 ? '/admin' : '/');
                 setLoginSucceeded(true);
                 await checkUserLoggedIn();
                 setMessage('Connexion réussie ! Vous serez redirigé...');
@@ -54,9 +58,9 @@ const AuthForm: React.FC = () => {
         }
 
         if (countdown === 0) {
-            navigate('/');
+            navigate(redirectTo);
         }
-    }, [countdown, navigate]);
+    }, [countdown, navigate, redirectTo]);
 
     return (
         <div className="bg-gray-200 p-4">

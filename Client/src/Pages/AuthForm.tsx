@@ -75,6 +75,9 @@ const AuthForm: React.FC = () => {
                             Accéder au panneau d'administration
                         </button>
                     )}
+
+                    {/* Message de réussite affiché juste après la connexion */}
+                    {message && <div className="text-green-600 text-center mt-4">{message}</div>}
                 </>
             ) : (
                 <>

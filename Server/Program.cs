@@ -96,6 +96,12 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Applique les migrations EF Core au demarrage
+using (var scope = app.Services.CreateScope())
+{
+    scope.ServiceProvider.GetRequiredService<DataContext>().Database.Migrate();
+}
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseHsts();

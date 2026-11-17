@@ -27,7 +27,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         options.Cookie.Name = ".BiblioAuth";
         options.Cookie.HttpOnly = true;
-        // Front (Vercel) et API sont sur des domaines différents : cookie cross-site
+        // Front et API sont sur des origines différentes : cookie SameSite=None
         options.Cookie.SameSite = SameSiteMode.None;
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
         options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
@@ -74,15 +74,19 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddAuthorization();
 
-// Origines autorisées : CORS et contrôle CSRF utilisent la même liste
+// Origines autorisées : CORS et contrôle CSRF utilisent la même liste.
+// Les origines propres à l'hébergement (ex. front sur le NAS) viennent de la configuration
+// (variable d'environnement Cors__FrontOrigins, séparées par des virgules).
+var extraOrigins = (builder.Configuration["Cors:FrontOrigins"] ?? "")
+    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
 var allowedOrigins = new[]
 {
-    "https://mokarube46-biblio.vercel.app",
     "http://localhost:5173",
     "http://localhost:3000"
-};
+}.Concat(extraOrigins).ToArray();
 
-// CORS - autorise Vercel + local
+// CORS - autorise les origines de la liste ci-dessus
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
